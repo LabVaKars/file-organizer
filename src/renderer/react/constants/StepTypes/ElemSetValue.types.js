@@ -1,0 +1,4 @@
+const PREFIX = 'SET_ELEM'
+
+export const CHANGE_VALUE = `${PREFIX}:CHANGE_VALUE`
+

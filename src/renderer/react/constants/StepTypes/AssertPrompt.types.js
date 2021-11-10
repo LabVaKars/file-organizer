@@ -1,0 +1,3 @@
+const PREFIX = 'ASSERT_PROMPT'
+
+export const CHANGE_TEXT = `${PREFIX}:CHANGE_TEXT` 

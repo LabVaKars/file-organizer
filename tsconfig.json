@@ -1,0 +1,38 @@
+{
+  "compilerOptions": {
+    "types": [ "webpack-env", "node" ],
+    "target": "ES2019",
+    "module": "CommonJS",
+    "lib": ["dom", "esnext"],
+    "declaration": true,
+    "declarationMap": true,
+    "jsx": "react",
+    "strict": true,
+    "pretty": true,
+    "sourceMap": true,
+    "baseUrl": "./src",
+    "paths": {
+      "tg_common/*" : ["renderer/react/components/common/*"],
+      "tg_components/*": ["renderer/react/components/*"],
+			"tg_constants/*": ["renderer/react/constants/*"],
+			"tg_containers/*": ["renderer/react/containers/*"],
+			"tg_pages/*": ["renderer/react/pages/*"],
+			"tg_reducers/*": ["renderer/react/reducers/*"],
+			"tg_services/*": ["renderer/react/services/*"],
+			"tg_types/*": ["renderer/react/types/*"],
+    },
+    /* Additional Checks */
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    /* Module Resolution Options */
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "outDir": "release/app/dist"
+  },
+  "exclude": ["test", "release/build", "release/app/dist", ".erb/dll",".erb"]
+}
