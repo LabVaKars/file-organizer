@@ -1,18 +1,18 @@
-import {useReducer} from 'react'
+// import {useReducer} from 'react'
 
-import ProjectFormReducer from 'tg_reducers/TableFormReducer'
+// import ProjectFormReducer from 'tg_reducers/TableFormReducer'
 
 function useTableForm(){
 
-	let initialState = {
-		table: {
-			name: null,
-			columns: [],
-			rows: []
-		}
-	}
+	// let initialState = {
+	// 	table: {
+	// 		name: null,
+	// 		columns: [],
+	// 		rows: []
+	// 	}
+	// }
 
-	const [tableState, tableReducer] = useReducer(ProjectFormReducer, initialState)
+	// const [tableState, tableReducer] = useReducer(ProjectFormReducer, initialState)
 
 	// const [projectsLoading, setProjectsLoading] = useState(false)
 	// function validateForm(projects){
@@ -71,10 +71,10 @@ function useTableForm(){
 	// 	}
 	// }
 
-	return [
-		tableState,
-		tableReducer
-	]
+	// return [
+	// 	tableState,
+	// 	tableReducer
+	// ]
 
 }
 

@@ -6,11 +6,15 @@ import React from 'react'
 import {BrowserRouter as Router, Route} from 'react-router-dom'
 import {DndProvider} from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
+import TableFormReducer from 'tg_reducers/TableFormReducer'
 
 import axios from 'axios'
 
 import App from 'tg_components/App'
 import UnauthorizedPage from 'tg_pages/UnauthorizedPage'
+
+import { store } from './store'
+import { Provider } from 'react-redux'
 
 // axios.interceptors.response.use((res) => {
 // 	return res
@@ -20,27 +24,19 @@ import UnauthorizedPage from 'tg_pages/UnauthorizedPage'
 // 	} else return Promise.reject(err)
 // })
 
-// const store = createStore(rootReducer, compose(
-// 	applyMiddleware(thunk),
-// 	window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-// ))
-
-// const unsubscribe = store.subscribe(() => console.log(store.getState()))
-
 const IndexApp = () => {
 	return (
 		<>
 		{/* <h2>Hellow world</h2> */}
-		{/* <Provider store = {store}> */}
+		<Provider store = {store}>
 			{/* <AuthContextProvider> */}
 				{/* <DndProvider backend={Backend}> */}
 					<Router>
 						<Route component={App} />
 					</Router>
-					{/* <App/> */}
 				{/* </DndProvider> */}
 			{/* </AuthContextProvider> */}
-		{/* </Provider> */}
+		</Provider>
 		</>
 	);
 }

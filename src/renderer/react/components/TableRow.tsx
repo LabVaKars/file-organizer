@@ -2,7 +2,7 @@ import React from 'react'
 
 // import {useDrag, useDrop} from 'react-dnd'
 // import {useHistory} from 'react-router-dom'
-import * as c from 'tg_constants/TableTypes'
+// import * as c from 'tg_constants/TableConsts'
 
 
 // interface Props{
@@ -16,7 +16,6 @@ export default function TableRow(props: Props) {
 	// let history = useHistory()
 
 	const {
-		reducer,
 		columnsOrder,
 		tableRow,
 		// errors,
@@ -35,7 +34,7 @@ export default function TableRow(props: Props) {
 
 	return (
 		<>
-			<tr /*ref={ref}*/ style={trStyle} onClick={() => reducer({type: c.TOGGLE_SELECT_ROW, id: tableRow.id})} >
+			<tr /*ref={ref}*/ style={trStyle} onClick={() => {}} >
 				<td style={{width: '50px'}}>
 					<div className="input-group">
 						{index + 1}
@@ -48,7 +47,7 @@ export default function TableRow(props: Props) {
 					<div className="d-flex align-items-center justify-content-around">
 						<i className="fas fa-trash-alt text-danger" onClick={(e) => {
 							e.stopPropagation()
-							reducer({type: c.DELETE_ROW, id:tableRow.id})
+							// reducer({type: c.DELETE_ROW, id:tableRow.id})
 						}}></i>
 					</div>
 				</td>

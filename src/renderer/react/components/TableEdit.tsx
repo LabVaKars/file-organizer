@@ -1,53 +1,84 @@
 import React, { useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
 
 // import useTableForm from '../hooks/useTableForm'
 import TableRowList from 'tg_components/TableRowList'
 import TableRowForm from 'tg_components/TableRowForm'
 import Button from 'tg_common/Button'
 
-import * as c from 'tg_constants/TableTypes'
+// import * as c from 'tg_constants/TableConsts'
+import { initTable } from 'tg_reducers/TableFormReducer'
+// type Props = any;
 
-type Props = any;
+const tableSelector = (state:any) => state.table;
 
-export default function TableEdit(props : Props) {
+export default function TableEdit() {
 
-	let {
-		tableState,
-		tableReducer
-	 } = props;
+	let tableState = useSelector(tableSelector)
+
+	const dispatch = useDispatch()
+	// let {
+	// 	tableState,
+	// 	tableReducer
+	//  } = props;
+
 
 	useEffect(() => {
 		console.log("Effect");
-		tableReducer({type:c.INIT_TABLE, table:{
+		dispatch(
+			initTable({
 				name: "test",
+				idVisible: true,
 				columns: [
-					{order: 1, name: "id", visible: true},
-					{order: 2, name: "name", visible: true}
+					{
+						id: 1,
+						state: {visible: true, sortable: true, filterable: true, groupable: true, orderable: true},
+						data: {order: 1, name: "name"}
+					}
 				],
 				rows: [
-					{id:1, name: "teksts1", isSelected: true},
-					{id:2, name: "teksts2", isSelected: false},
-					{id:3, name: "teksts3", isSelected: false},
-					{id:4, name: "teksts4", isSelected: false},
-					{id:5, name: "teksts5", isSelected: false},
+					{
+						id: 1,
+						state: {order: 1, isSelected: true},
+						data: {name: "teksts1"}
+					},
+					{
+						id: 2,
+						state: {order: 2, isSelected: false},
+						data: {name: "teksts2"}
+					},
+					{
+						id: 3,
+						state: {order: 3, isSelected: false},
+						data: {name: "teksts3"}
+					},
+					{
+						id: 4,
+						state: {order: 4, isSelected: false},
+						data: {name: "teksts4"}
+					},
+					{
+						id: 5,
+						state: {order: 5, isSelected: false},
+						data: {name: "teksts5"}
+					}
 				]
-			}
-		});
+			})
+		);
 		console.log(tableState);
 	},[])
 	let selectedProject
-	console.log("tableState1", tableState)
-	useEffect(() => {
-		console.log("tableState2", tableState)
-		selectedProject = tableState.table.rows.filter((row: any) => {
-			return row.isSelected == true
-		})
-	},[])
+	// useEffect(() => {
+	// 	console.log("tableState2", tableState)
+	// 	selectedProject = tableState.table.rows.filter((row: any) => {
+	// 		return row.isSelected == true
+	// 	})
+	// },[])
 
 	return (
 		<>
 			<div className="card-header">
-				<h3>{tableState.table.name}</h3>
+				<h3>{tableState.name}</h3>
 			</div>
 			{/* {tableState.hasChanges
 				? <div className="alert alert-danger m-0">You have unsaved changes</div>
@@ -58,26 +89,31 @@ export default function TableEdit(props : Props) {
 			</div>
 			<div className="card-header">
 				<TableRowForm
-					reducer={tableReducer}
 					selectedProject={selectedProject}
 				/>
 			</div>
 			<div className="card-body overflow-auto" style={{maxHeight: '300px', minHeight: '300px'}}>
 				<TableRowList
-					table={tableState.table}
-					reducer={tableReducer}
+					table={tableState}
 				/>
 			</div>
 			<div className="card-footer">
 				<Button
 					name="Add Project"
 					// icon={<i className="fas fa-plus-square"></i>}
-					handleClick={() => tableReducer({type: c.ADD_ROW, id:1})} />
+					handleClick={
+						// () => tableReducer({type: c.ADD_ROW, id:1})
+						() => {}
+						// () => dispatch(addRow(1))
+					} />
 				<Button
 					name="Save Changes"
-					disabled={!tableState.hasChanges}
+					disabled={false}
 					// icon={<i className="fas fa-edit"></i>}
-					handleClick={() => tableReducer({type: c.SAVE_CHANGES})} />
+					handleClick={
+						// () => tableReducer({type: c.SAVE_CHANGES})
+						() => {}
+					} />
 			</div>
 		</>
 	)

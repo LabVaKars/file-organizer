@@ -1,7 +1,8 @@
 import React from 'react'
+// import { useDispatch } from 'react-redux'
 
 import TextInput from 'tg_common/TextInput'
-import * as c from 'tg_constants/TableTypes'
+// import * as c from 'tg_constants/TableConsts'
 
 // type Reducer<S, A> = (prevState: S, action: A) => S;
 
@@ -30,11 +31,13 @@ type Props = any
 
 export default function TableRowForm(props : Props) {
 
-	const {selectedRow, reducer} = props
+	const {selectedRow} = props
 
 	if(selectedRow && selectedRow.length == 1){
 
 		let sp = selectedRow[0]
+
+		// const dispatch = useDispatch();
 
 		console.log(sp);
 
@@ -45,7 +48,7 @@ export default function TableRowForm(props : Props) {
 					<div className="col-6">
 						<TextInput
 							label="Rule name" placeholder="Enter name for new rule..."
-							handleChange={(e: React.ChangeEvent<HTMLInputElement>) => reducer({type: c.CHANGE_NAME, value: e.target.value, id: sp.id})}
+							handleChange={() => {}}
 							value={sp.name}/>
 					</div>
 					{/* { sp.errors.name &&

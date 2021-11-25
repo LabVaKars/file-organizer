@@ -15,12 +15,14 @@ export default function TableRowList(props: Props) {
 
 	console.log(table)
 
-	let columnsOrder = table.columns.sort((fst: any, snd: any) => {
+	let columnsOrder = table.columns.slice().sort((fst: any, snd: any) => {
 		return fst.order - snd.order;
 	}).map((tableColumn: any) => {
 		return tableColumn.name
 	})
 
+
+	console.log("table",table)
 
 	return (
 		<>
@@ -28,7 +30,7 @@ export default function TableRowList(props: Props) {
 				<thead>
 					<tr>
 						<th style={{width: '50px'}}>#</th>
-						{table.columns.sort((fst: any, snd: any) => {
+						{table.columns.slice().sort((fst: any, snd: any) => {
 							return fst.order - snd.order;
 						}).map((tableColumn: any) => {
 							return tableColumn.visible
@@ -46,7 +48,7 @@ export default function TableRowList(props: Props) {
 						</tr>
 					) :	(
 						<>
-							{table.rows.map((tableRow: any, i: number) => {
+							{table.dataRows.map((tableRow: any, i: number) => {
 								return (<TableRow
 									reducer={reducer}
 									columnsOrder={columnsOrder}

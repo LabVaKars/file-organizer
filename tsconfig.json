@@ -20,6 +20,7 @@
 			"tg_reducers/*": ["renderer/react/reducers/*"],
 			"tg_services/*": ["renderer/react/services/*"],
 			"tg_types/*": ["renderer/react/types/*"],
+			"tg_actions/*": ["renderer/react/actions/*"],
     },
     /* Additional Checks */
     "noUnusedLocals": true,
