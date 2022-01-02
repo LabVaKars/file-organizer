@@ -12,6 +12,7 @@
     "sourceMap": true,
     "baseUrl": "./src",
     "paths": {
+      "sqlite3": ["../release/app/node_modules/sqlite3/bin/win32-x64-89/sqlite3.node"],
       "tg_common/*" : ["renderer/react/components/common/*"],
       "tg_components/*": ["renderer/react/components/*"],
 			"tg_constants/*": ["renderer/react/constants/*"],
@@ -21,10 +22,11 @@
 			"tg_services/*": ["renderer/react/services/*"],
 			"tg_types/*": ["renderer/react/types/*"],
 			"tg_actions/*": ["renderer/react/actions/*"],
+			"tg_models/*": ["renderer/react/models/*"],
     },
     /* Additional Checks */
     "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     /* Module Resolution Options */

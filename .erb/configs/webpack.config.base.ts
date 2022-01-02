@@ -10,6 +10,9 @@ import { dependencies as externals } from '../../release/app/package.json';
 
 export default {
   externals: [...Object.keys(externals || {})],
+  // externals: [
+  //   "sqlite3"
+  // ],
 
   stats: 'errors-only',
 

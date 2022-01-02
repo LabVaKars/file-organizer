@@ -1,0 +1,84 @@
+Filters - rules to find out what folders and files to use
+    Using some Metadata:
+    photo, video - exif
+    audio
+Statements - 2 or more filters or statements combined by AND or OR rule
+Rules - apply rules to certain folders
+Source - folders, where to start apply Filters
+Destination - folders, where files and folders finish
+Actions - some manipulations on selected by rules files and folders
+    move, copy, delete, unzip, rename
+
+
+
+Json structures
+
+
+folders: [
+    {
+        id: "asdasd",
+        name: "",
+        path: ""
+    }
+]
+rules: [
+    {
+        src: {
+            id: "asdasd"
+        },
+        statement: {
+            id: "asdasd"
+        },
+        action: {
+            id: "asdasd"
+        },
+        dest: {
+            id: "asdasd"
+        }
+    }
+]
+statements: [
+    {
+        filters: [
+            {
+                id: "asdasd",
+                order: 1
+            }
+        ],
+        substatements: []
+    }
+]
+filters: [
+    {
+        id: "asdasd"
+        field: ""
+        equality: ""
+        value: ""
+    }
+]
+actions: [
+
+]
+
+
+rule: {
+    statement: {
+
+    }
+}
+
+
+
+
+redux
+Pros +
+    easy to change
+
+Cons -
+    hard to synchronize with sqlite
+
+sqLite
+Pros +
+    understandeable OR model
+Cons -
+    Sync with react state

@@ -20,6 +20,23 @@
           "endsPattern": "(Compiled successfully|Failed to compile)\\.$"
         }
       }
+    },
+    {
+      "type": "gprbuild",
+      "projectFile": "${config:ada.projectFile}",
+      "problemMatcher": [
+        "$ada"
+      ],
+      "group": "build",
+      "label": "ada: Build current project"
+    },
+    {
+      "type": "npm",
+      "script": "build:main",
+      "group": "build",
+      "problemMatcher": [],
+      "label": "npm: build:main",
+      "detail": "cross-env NODE_ENV=production TS_NODE_TRANSPILE_ONLY=true webpack --config ./.erb/configs/webpack.config.main.prod.ts"
     }
   ]
 }

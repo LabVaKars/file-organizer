@@ -14,5 +14,9 @@
     "link-modules": "node -r ts-node/register ../../.erb/scripts/link-modules.js",
     "postinstall": "npm run electron-rebuild && npm run link-modules"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "knex": "^0.95.15",
+    "sqlite3": "^5.0.2"
+  }
 }

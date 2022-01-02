@@ -1,16 +1,17 @@
 // styling
-// import '../../../node_modules/bootstrap/dist/js/bootstrap.js'
-// import '../../../node_modules/bootstrap/dist/css/bootstrap.css'
+
+import bootstrap from 'react-bootstrap'
+// import 'assets/index.css'
 // react
 import React from 'react'
-import {BrowserRouter as Router, Route} from 'react-router-dom'
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom'
 import {DndProvider} from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import TableFormReducer from 'tg_reducers/TableFormReducer'
 
 import axios from 'axios'
 
-import App from 'tg_components/App'
+import App from 'renderer/react/App'
 import UnauthorizedPage from 'tg_pages/UnauthorizedPage'
 
 import { store } from './store'
@@ -31,9 +32,7 @@ const IndexApp = () => {
 		<Provider store = {store}>
 			{/* <AuthContextProvider> */}
 				{/* <DndProvider backend={Backend}> */}
-					<Router>
-						<Route component={App} />
-					</Router>
+					<App />
 				{/* </DndProvider> */}
 			{/* </AuthContextProvider> */}
 		</Provider>

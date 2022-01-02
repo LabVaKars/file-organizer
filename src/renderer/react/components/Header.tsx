@@ -4,8 +4,11 @@ import {Link} from 'react-router-dom'
 
 const leftLinks = [
 	{path: '/', label: 'Home'},
-	{path: '/projects', label: 'My Projects'},
-	{path: '/generate', label: 'Code generator'},
+	{path: '/folders', label: 'Used folders'},
+	{path: '/filters', label: 'Filters'},
+	{path: '/conditions', label: 'Conditions'},
+	{path: '/actions', label: 'Actions'},
+	{path: '/rules', label: 'Rules'}
 ]
 
 
@@ -13,7 +16,7 @@ const leftLinks = [
 const Header = () => {
 
 	return (
-		<nav className="navbar navbar-expand-sm bg-dark navbar-dark justify-content-between">
+		<nav className="navbar navbar-default navbar-expand-sm sticky-top bg-dark navbar-dark justify-content-between">
 			<ul className="navbar-nav">
 				{leftLinks.map((link) => {
 					return (

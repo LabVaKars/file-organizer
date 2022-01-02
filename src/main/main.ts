@@ -16,6 +16,17 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import MenuBuilder from './menu';
 import { resolveHtmlPath } from './util';
+import { processSql } from './models';
+import { dropDB, setupDB } from './db/dbSetup';
+import { getFolderPath } from './fsUtils';
+
+let resetDB = false;
+(async () => {
+  if(resetDB){
+    await dropDB()
+  }
+  await setupDB()
+})()
 
 export default class AppUpdater {
   constructor() {
@@ -27,7 +38,28 @@ export default class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
+
+ipcMain.handle('run-sql', async (event, arg) => {
+  console.log("got signal from renderer: run-sql")
+  console.log(arg)
+  let sqlCode = arg[0]
+  let args = arg.slice(1)
+  let result = await processSql(sqlCode, args)
+  console.log("From ipc Main", result)
+  return result;
+})
+
+ipcMain.handle('file-dialog', async (event, arg) => {
+  console.log("got signal from renderer: file-dialog")
+  let folderPath = (await getFolderPath()).filePaths[0]
+  console.log("From ipc Main", folderPath)
+  let folderName = path.parse(folderPath).name
+  console.log(folderName)
+  return {path: folderPath, name: folderName};
+})
+
 ipcMain.on('ipc-example', async (event, arg) => {
+  console.log("got signal from renderer: ipc-example")
   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
   console.log(msgTemplate(arg));
   event.reply('ipc-example', msgTemplate('pong'));
@@ -83,6 +115,7 @@ const createWindow = async () => {
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
+
   mainWindow.on('ready-to-show', () => {
     if (!mainWindow) {
       throw new Error('"mainWindow" is not defined');
@@ -99,14 +132,43 @@ const createWindow = async () => {
     mainWindow = null;
   });
 
-  const menuBuilder = new MenuBuilder(mainWindow);
-  menuBuilder.buildMenu();
-
-  // Open urls in the user's browser
   mainWindow.webContents.on('new-window', (event, url) => {
     event.preventDefault();
     shell.openExternal(url);
   });
+
+  const menuBuilder = new MenuBuilder(mainWindow);
+  menuBuilder.buildMenu();
+
+  // secondaryWindow = new BrowserWindow({
+  //   show: false,
+  //   width: 800,
+  //   height: 600,
+  //   icon: getAssetPath('icon.png'),
+  //   // webPreferences: {
+  //   //   preload: path.join(__dirname, 'preload.js'),
+  //   // },
+  // });
+
+  // secondaryWindow.loadURL(resolveHtmlPath('index.html'));
+
+  // secondaryWindow.on('ready-to-show', () => {
+  //   if (!secondaryWindow) {
+  //     throw new Error('"secondaryWindow" is not defined');
+  //   }
+  //   if (process.env.START_MINIMIZED) {
+  //     secondaryWindow.minimize();
+  //   } else {
+  //     secondaryWindow.show();
+  //     secondaryWindow.focus();
+  //   }
+  // });
+
+  // secondaryWindow.on('closed', () => {
+  //   secondaryWindow = null;
+  // });
+
+  // Open urls in the user's browser
 
   // Remove this if your app does not use auto updates
   // eslint-disable-next-line
