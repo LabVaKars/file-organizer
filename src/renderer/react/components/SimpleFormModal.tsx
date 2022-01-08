@@ -2,36 +2,34 @@ import React from 'react'
 import { Modal, Button } from 'react-bootstrap'
 
 interface Props {
+    htmlId: any,
     children: any,
     show: boolean,
     onCancel: any,
-    onSubmit: any,
-    name: string,
     label: string
 }
 
 export default function SimpleFormModal(props : Props) {
 
     let {
+        htmlId,
         children,
         show,
         onCancel,
-        // onSubmit,
-        // name,
         label
     } = props
 
 	return (
 		<>
-            <Modal size="lg" show={show} backdrop="static" onHide={onCancel} centered>
+            <Modal size="xl" style={{maxWidth: "80% !important"}} show={show} backdrop="static" onHide={onCancel} centered id={htmlId}>
                 <Modal.Header closeButton>
                     <Modal.Title>{label}</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body style={{overflow: "auto"}}>
                     {children}
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={onCancel}>
+                    <Button id={"cancelBtn"} variant="secondary" onClick={onCancel}>
                         Cancel
                     </Button>
                     {/* <Button variant="primary" form={name} onClick={onSubmit}>

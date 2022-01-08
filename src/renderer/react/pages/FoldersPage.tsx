@@ -1,10 +1,11 @@
 import { Folder } from 'main/enums/sqlipc'
 import React from 'react'
+import { Card } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import EditFolderForm from 'tg_components/EditFolderForm'
+import EditFolderForm from 'tg_components/forms/EditFolderForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
-import UsedFoldersTable from 'tg_components/UsedFoldersTable'
+import UsedFoldersTable from 'tg_components/tables/UsedFoldersTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
 import { initTable } from 'tg_reducers/UsedFoldersTableReducer'
 import { useSql } from '../hooks/utilHooks'
@@ -45,6 +46,7 @@ export default function FoldersPage() {
 				let onSubmit = (data: any) => {
 					runSql(Folder.insertFolder, {
 					name: data.name,
+					description: data.description,
 					path: data.path
 					})
 					getFolders()
@@ -58,6 +60,7 @@ export default function FoldersPage() {
 					runSql(Folder.updateFolder, {
 					id: editId,
 					name: data.name,
+					description: data.description,
 					path: data.path
 					})
 					getFolders()
@@ -70,6 +73,7 @@ export default function FoldersPage() {
 				let onSubmit = (data: any) => {
 					runSql(Folder.insertFolder, {
 					name: data.name,
+					description: data.description,
 					path: data.path
 					})
 					getFolders()
@@ -95,24 +99,31 @@ export default function FoldersPage() {
 
 	return (
 		<>
-			<SimpleFormModal
-			show={modalShow}
-			onCancel={closeForm}
-			name={formName}
-			label={formLabel}
-			onSubmit={()=> {console.log("Form submitted from Modal")}}
-			>
-				<EditFolderForm
-					form={folderForm}
-					name={formName}
-					isNew={(editId == 0)}
-					folderId={editId}
-					onSubmit={onSubmit(folderForm.handleSubmit, editId, isCopy)}
+			<Card.Header id="pageTitle">
+				<h3>
+					Used folders
+				</h3>
+			</Card.Header>
+
+			<Card.Body>
+				<UsedFoldersTable
+					getFolders={getFolders}
 				/>
-			</SimpleFormModal>
-			<UsedFoldersTable
-				getFolders={getFolders}
-			/>
+				<SimpleFormModal
+					show={modalShow}
+					onCancel={closeForm}
+					label={formLabel}
+					htmlId={"foldersPageModal"}
+				>
+					<EditFolderForm
+						form={folderForm}
+						name={formName}
+						isNew={(editId == 0)}
+						folderId={editId}
+						onSubmit={onSubmit(folderForm.handleSubmit, editId, isCopy)}
+					/>
+				</SimpleFormModal>
+			</Card.Body>
 		</>
 	)
 }

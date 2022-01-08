@@ -1,10 +1,10 @@
 
 import { Folder } from "../enums/sqlipc";
-import { knSqlite } from "../db/dbUtils";
+import { knSqlite } from "../main";
 
 let folderSql = new Map()
 folderSql.set(Folder.getFolders, () => {
-    let statement = knSqlite.select("id","name","path").from("folders")
+    let statement = knSqlite.select("id","name","description","path").from("folders")
     console.log(Folder.getFolders, statement.toSQL())
     let result = statement.then((rows: any) => {
         return rows
@@ -13,7 +13,7 @@ folderSql.set(Folder.getFolders, () => {
 })
 
 folderSql.set(Folder.getFolderById, ([id]:any) => {
-    let statement = knSqlite.select("id","name","path").from("folders").where({id})
+    let statement = knSqlite.select("id","name","description","path").from("folders").where({id})
     console.log(Folder.getFolderById, statement.toSQL())
     let result = statement.then((rows: any) => {
         return rows[0]
@@ -31,14 +31,6 @@ folderSql.set(Folder.insertFolder, async ([folder]: any) => {
 
     let newId = returnId.id
     console.log("newId", newId)
-    // knSqlite.transaction(function(trx) {
-    //     let statement = knSqlite.insert(toInsert).into("folders")
-    //     newId = statement
-
-    //     .transacting(trx)
-    //     .then(trx.commit)
-    //     console.log(Folder.insertFolder, statement.toSQL())
-    // })
     return newId
 })
 

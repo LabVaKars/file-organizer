@@ -19,13 +19,34 @@ import { resolveHtmlPath } from './util';
 import { processSql } from './models';
 import { dropDB, setupDB } from './db/dbSetup';
 import { getFolderPath } from './fsUtils';
+import knex from 'knex'
+
+export let dbPath = './devsqlite.db'
+
+const isDevelopment =
+  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
+
+if (isDevelopment) {
+  require('electron-debug')();
+  dbPath = './devsqlite.db'
+} else {
+  dbPath = './prodsqlite.db'
+}
+
+export let knSqlite = knex({
+  client: 'sqlite3',
+  connection: {
+      filename: dbPath
+  },
+  useNullAsDefault: true
+});
 
 let resetDB = false;
 (async () => {
   if(resetDB){
-    await dropDB()
+    await dropDB(dbPath)
   }
-  await setupDB()
+  await setupDB(dbPath)
 })()
 
 export default class AppUpdater {
@@ -70,8 +91,6 @@ if (process.env.NODE_ENV === 'production') {
   sourceMapSupport.install();
 }
 
-const isDevelopment =
-  process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 if (isDevelopment) {
   require('electron-debug')();
@@ -110,6 +129,7 @@ const createWindow = async () => {
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      devTools: true
     },
   });
 
@@ -139,34 +159,6 @@ const createWindow = async () => {
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
-
-  // secondaryWindow = new BrowserWindow({
-  //   show: false,
-  //   width: 800,
-  //   height: 600,
-  //   icon: getAssetPath('icon.png'),
-  //   // webPreferences: {
-  //   //   preload: path.join(__dirname, 'preload.js'),
-  //   // },
-  // });
-
-  // secondaryWindow.loadURL(resolveHtmlPath('index.html'));
-
-  // secondaryWindow.on('ready-to-show', () => {
-  //   if (!secondaryWindow) {
-  //     throw new Error('"secondaryWindow" is not defined');
-  //   }
-  //   if (process.env.START_MINIMIZED) {
-  //     secondaryWindow.minimize();
-  //   } else {
-  //     secondaryWindow.show();
-  //     secondaryWindow.focus();
-  //   }
-  // });
-
-  // secondaryWindow.on('closed', () => {
-  //   secondaryWindow = null;
-  // });
 
   // Open urls in the user's browser
 

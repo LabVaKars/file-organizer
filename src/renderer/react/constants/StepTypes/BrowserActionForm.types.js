@@ -1,4 +1,0 @@
-const PREFIX = 'BROWSER_ACTION'
-
-export const CHOOSE_ACTION = `${PREFIX}:CHOOSE_ACTION`
-

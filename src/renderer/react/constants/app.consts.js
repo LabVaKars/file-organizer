@@ -1,1 +1,1 @@
-export const dbPath = './mysqlite,db'
+export const dbPath = './mysqlite.db'

@@ -1,3 +1,0 @@
-const PREFIX = 'PROMPT_VALUE'
-
-export const CHANGE_TEXT = `${PREFIX}:CHANGE_TEXT` 

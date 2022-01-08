@@ -1,3 +1,0 @@
-const PREFIX = 'PROMPT_ACTION'
-
-export const CHANGE_OPTION = `${PREFIX}:CHANGE_OPTION` 

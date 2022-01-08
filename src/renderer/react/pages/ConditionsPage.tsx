@@ -1,15 +1,17 @@
 import { Condition, Filter } from 'main/enums/sqlipc'
 import React, { useEffect } from 'react'
+import { Card } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import EditConditionForm from 'tg_components/EditConditionForm'
-import EditFilterForm from 'tg_components/EditFilterForm'
-import SelectFilterForm from 'tg_components/SelectFilterForm'
-import SelectSubCondForm from 'tg_components/SelectSubCondForm'
+import EditConditionForm from 'tg_components/forms/EditConditionForm'
+import EditFilterForm from 'tg_components/forms/EditFilterForm'
+import SelectFilterForm from 'tg_components/forms/SelectFilterForm'
+import SelectSubCondForm from 'tg_components/forms/SelectSubCondForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
-import UsedConditionsTable from 'tg_components/UsedConditionsTable'
+import UsedConditionsTable from 'tg_components/tables/UsedConditionsTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
 import { changeForm, selectFilter, selectSubCond } from 'tg_reducers/UsedConditionsPageReducer'
+import { initTable } from 'tg_reducers/UsedConditionsTableReducer'
 import { useSql } from '../hooks/utilHooks'
 
 export default function ConditionsPage() {
@@ -42,6 +44,13 @@ export default function ConditionsPage() {
         assosiation: "OR"
     }
 
+	const getConditions = async () => {
+		console.log("Getting conditions from")
+		let result = await runSql(Condition.getConditions)
+		dispatch(initTable(result))
+		console.log('In React Renderer', result)
+		return
+	}
 
 	const filterForm = useForm()
 
@@ -116,10 +125,9 @@ export default function ConditionsPage() {
 				form={filterForm}
 				name={formName}
 				isNew={(id == 0)}
-				prevId={prevId}
 				filterId={id}
 				onSubmit={onSubmitFilter(filterForm.handleSubmit, editId, prevId)}
-				isCopy={false} />
+			/>
 		} else if(type == "Condition"){
 			form = <EditConditionForm
 				form={conditionForm}
@@ -129,16 +137,15 @@ export default function ConditionsPage() {
 				conditionId={id}
 				selectedFilterId={selectedFilterId}
 				selectedSubCondId={selectedSubCondId}
-				onSubmit={onSubmitSubCond(conditionForm.handleSubmit, editId, prevId)} />
+				onSubmit={onSubmitSubCond(conditionForm.handleSubmit, editId, prevId)}
+			/>
 		} else if(type == "FilterSelect"){
 			form = <SelectFilterForm
 				prevId={prevId}
-				conditionId={id}
 				onSubmit={onSubmitSelectFilter} />
 		} else if(type == "ConditionSelect"){
 			form = <SelectSubCondForm
 				prevId={prevId}
-				conditionId={id}
 				onSubmit={onSubmitSelectSubCond} />
 		}
 
@@ -154,18 +161,24 @@ export default function ConditionsPage() {
 
 	return (
 		<>
-			<UsedConditionsTable />
-			<SimpleFormModal
-				show={modalShow}
-				onCancel={closeForm}
-				name={formName}
-				label={formLabel}
-				onSubmit={(e:any) => {
-					e.preventDefault()
-					console.log("Submitted Form")
-				}}>
-				<FormSwitch id={editId} prevId={prevId} type={editType}  />
-			</SimpleFormModal>
+
+			<Card.Header id="pageTitle">
+				<h3>
+					Used folders
+				</h3>
+			</Card.Header>
+			<Card.Body>
+				<UsedConditionsTable
+					getConditions={getConditions}
+				/>
+				<SimpleFormModal
+					show={modalShow}
+					onCancel={closeForm}
+					label={formLabel}
+					htmlId={"conditionsPageModal"}>
+					<FormSwitch id={editId} prevId={prevId} type={editType}  />
+				</SimpleFormModal>
+			</Card.Body>
 		</>
 	)
 }

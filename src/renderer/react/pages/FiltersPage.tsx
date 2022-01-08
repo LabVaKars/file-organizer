@@ -1,10 +1,11 @@
 import { Filter } from 'main/enums/sqlipc'
 import React from 'react'
+import { Card } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
 import { useDispatch, useSelector } from 'react-redux'
-import EditFilterForm from 'tg_components/EditFilterForm'
+import EditFilterForm from 'tg_components/forms/EditFilterForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
-import UsedFiltersTable from 'tg_components/UsedFiltersTable'
+import UsedFiltersTable from 'tg_components/tables/UsedFiltersTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
 import { initTable } from 'tg_reducers/UsedFiltersTableReducer'
 import { useSql } from '../hooks/utilHooks'
@@ -96,29 +97,31 @@ export default function FiltersPage() {
 
 	return (
 		<>
-			<SimpleFormModal
-                show={modalShow}
-                onCancel={closeForm}
-                name={formName}
-                label={formLabel}
-                onSubmit={(e:any)=> {
-					e.preventDefault()
-					console.log("Form submitted from Modal")
-				}}
-              >
-				<EditFilterForm
-					form={filterForm}
-					name={formName}
-					isNew={(editId == 0)}
-					filterId={editId}
-					onSubmit={onSubmit(filterForm.handleSubmit, editId, isCopy)}
-					isCopy={isCopy}
-					prevId={0}
+			<Card.Header id="pageTitle">
+				<h3>
+					Used folders
+				</h3>
+			</Card.Header>
+
+			<Card.Body>
+				<UsedFiltersTable
+					getFilters={getFilters}
 				/>
-			</SimpleFormModal>
-			<UsedFiltersTable
-				getFilters={getFilters}
-			/>
+				<SimpleFormModal
+					show={modalShow}
+					onCancel={closeForm}
+					label={formLabel}
+					htmlId={"filtersPageModal"}
+				>
+					<EditFilterForm
+						form={filterForm}
+						name={formName}
+						isNew={(editId == 0)}
+						filterId={editId}
+						onSubmit={onSubmit(filterForm.handleSubmit, editId, isCopy)}
+					/>
+				</SimpleFormModal>
+			</Card.Body>
 		</>
 	)
 }

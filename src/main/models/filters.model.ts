@@ -1,6 +1,6 @@
 
 import { Filter } from "../enums/sqlipc";
-import { knSqlite } from "../db/dbUtils";
+import { knSqlite } from "../main";
 
 let filterSql = new Map()
 filterSql.set(Filter.getFilters, () => {

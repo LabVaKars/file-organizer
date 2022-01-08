@@ -8,6 +8,7 @@ const leftLinks = [
 	{path: '/filters', label: 'Filters'},
 	{path: '/conditions', label: 'Conditions'},
 	{path: '/actions', label: 'Actions'},
+	{path: '/timetables', label: 'Timetables'},
 	{path: '/rules', label: 'Rules'}
 ]
 
@@ -26,7 +27,7 @@ const Header = () => {
 					)
 				})}
 			</ul>
-			<ul className="navbar-nav">
+			{/* <ul className="navbar-nav">
 				<li className="nav-item">
 					<Link to={'/login'}><span className="nav-link">Sign In</span></Link>
 				</li>
@@ -34,7 +35,7 @@ const Header = () => {
 				<li>
 					<Link to={'/register'}><span className="nav-link">Sign Up</span></Link>
 				</li>
-			</ul>
+			</ul> */}
 		</nav>
 	)
 }

@@ -1,6 +1,6 @@
 
 import { Condition } from "../enums/sqlipc";
-import { knSqlite } from "../db/dbUtils";
+import { knSqlite } from "../main";
 import { processSql } from ".";
 
 
@@ -256,6 +256,32 @@ conditionSql.set(Condition.updateCondition, ([condition]: any) => {
         .transacting(trx)
         .then(trx.commit)
         console.log(Condition.updateCondition, statement.toSQL())
+    })
+    return
+})
+
+conditionSql.set(Condition.removeFilter, ([conditionId, filterId]: any) => {
+    // let id = conditionId
+    knSqlite.transaction(function(trx) {
+        console.log(conditionId)
+        let statement = knSqlite("conditionParts").where({filterId, conditionId}).delete()
+        statement
+        .transacting(trx)
+        .then(trx.commit)
+        console.log(Condition.removeFilter, statement.toSQL())
+    })
+    return
+})
+
+conditionSql.set(Condition.removeCondition, ([conditionId, subCondId]: any) => {
+    // let id = conditionId
+    knSqlite.transaction(function(trx) {
+        console.log(conditionId)
+        let statement = knSqlite("conditionParts").where({subConditionId:subCondId, conditionId}).delete()
+        statement
+        .transacting(trx)
+        .then(trx.commit)
+        console.log(Condition.removeCondition, statement.toSQL())
     })
     return
 })
