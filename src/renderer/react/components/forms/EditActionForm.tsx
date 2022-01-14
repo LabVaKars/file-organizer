@@ -1,12 +1,12 @@
 
-import { Action, Folder } from 'main/enums/sqlipc';
+import { Action } from 'main/enums/sqlipc';
 import React, { useEffect } from 'react'
 
 import { Button, Container, Form, InputGroup } from 'react-bootstrap'
 import { Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useSql } from 'renderer/react/hooks/utilHooks';
-import { changeForm, removeSelect } from 'tg_reducers/UsedActionsPageReducer';
+import { moveToForm, saveForm } from 'tg_reducers/UsedActionsPageReducer';
 
 
 interface Props {
@@ -14,9 +14,12 @@ interface Props {
   name: string,
   isNew: boolean,
   actionId: number,
-  selectedSourceFolderId: number,
-  selectedDestinationFolderId: number,
-  onSubmit: any
+  // prevId: number,
+  // selectedSourceFolderId: number,
+  // selectedDestinationFolderId: number,
+  onSubmit: any,
+  toReload: any,
+  actionFormState: any
 };
 
 export default function EditActionForm(props: Props) {
@@ -28,12 +31,32 @@ export default function EditActionForm(props: Props) {
     name,
     isNew,
     actionId,
-    selectedSourceFolderId,
-    selectedDestinationFolderId,
+    // prevId,
+    // selectedSourceFolderId,
+    // selectedDestinationFolderId,
     onSubmit,
+    toReload,
+    actionFormState
   } = props;
 
   let dispatch = useDispatch()
+
+  useEffect(() => {
+    if(toReload){
+      if (!isNew) {
+        console.log("Reading action from DB")
+        getAction(actionId)
+      }
+    } else {
+      getSavedAction(form, actionFormState)
+    }
+  },[actionId])
+
+  const getSavedAction = (form:any, formState: any) => {
+    for(const [key, value] of Object.entries(formState)){
+      form.setValue(key, value)
+    }
+  }
 
   const getAction = async (actionId:any) => {
     console.log("Getting actions from")
@@ -51,40 +74,46 @@ export default function EditActionForm(props: Props) {
     console.log('In React Renderer', result)
   }
 
-  const addSourceFolder = async (folderId:number) => {
-    let folder =  await runSql(Folder.getFolderById, folderId)
-    form.setValue("sourceId", folderId)
-    form.setValue("source", folder.path)
-    dispatch(removeSelect())
+  // const addSourceFolder = async (form:any, folderId:number) => {
+  //   let folder =  await runSql(Folder.getFolderById, folderId)
+  //   form.setValue("sourceId", folderId)
+  //   form.setValue("source", folder.path)
+  //   dispatch(removeSelect())
+  // }
+
+  // const addDestinationFolder = async (form:any, folderId:number) => {
+  //   let folder =  await runSql(Folder.getFolderById, folderId)
+  //   form.setValue("destinationId", folderId)
+  //   form.setValue("destination", folder.path)
+  //   dispatch(removeSelect())
+  // }
+
+
+
+  // useEffect(() => {
+  //   if(selectedSourceFolderId != 0) {
+  //     console.log("Setting Source folder ID")
+  //     addSourceFolder(form, selectedSourceFolderId)
+  //   }
+  // },[selectedSourceFolderId])
+
+  // useEffect(() => {
+  //   if(selectedDestinationFolderId != 0) {
+  //     console.log("Setting Destination folder ID")
+  //     addDestinationFolder(form, selectedDestinationFolderId)
+  //   }
+  // },[selectedDestinationFolderId])
+
+  let openSourceIdSelect = (editId:any) => {
+    console.log(form.getValues())
+    dispatch(saveForm(form.getValues()))
+    dispatch(moveToForm("SourceFolderSelect", false))
   }
 
-  const addDestinationFolder = async (folderId:number) => {
-    let folder =  await runSql(Folder.getFolderById, folderId)
-    form.setValue("destinationId", folderId)
-    form.setValue("destination", folder.path)
-    dispatch(removeSelect())
-  }
-
-  useEffect(() => {
-    console.log(actionId)
-    if (!isNew) getAction(actionId)
-  },[actionId])
-
-
-  useEffect(() => {
-    if(selectedSourceFolderId != 0) addSourceFolder(selectedSourceFolderId)
-  },[selectedSourceFolderId])
-
-  useEffect(() => {
-    if(selectedDestinationFolderId != 0) addDestinationFolder(selectedDestinationFolderId)
-  },[selectedDestinationFolderId])
-
-  let openSourceIdSelect = () => {
-    dispatch(changeForm(actionId, "SourceFolderSelect", false))
-  }
-
-  let openDestinationIdSelect = () => {
-    dispatch(changeForm(actionId, "DestinationFolderSelect", false))
+  let openDestinationIdSelect = (editId:any) => {
+    console.log(form.getValues())
+    dispatch(saveForm(form.getValues()))
+    dispatch(moveToForm("DestinationFolderSelect", false))
   }
 
   return (
@@ -124,13 +153,11 @@ export default function EditActionForm(props: Props) {
               rules={{required: true}}
               render={({field}) => {
                 return (
-                  <Form.Select {...field}>
+                  <Form.Select id={"form"+field.name} {...field}>
                     <option selected hidden disabled>Select...</option>
                     <option value="move">Move</option>
                     <option value="copy">Copy</option>
                     <option value="rename">Rename</option>
-                    <option value="zip">Zip</option>
-                    <option value="unzip">Unzip</option>
                   </Form.Select>
                 )
               }}
@@ -156,7 +183,7 @@ export default function EditActionForm(props: Props) {
                 return (
                   <InputGroup>
                     <Form.Control id={"form"+field.name} disabled {...field} />
-                    <Button id={"selectSourceFolderBtn"} onClick={() => openSourceIdSelect()}>Select...</Button>
+                    <Button id={"selectSourceFolderBtn"} onClick={() => openSourceIdSelect(actionId)}>Select...</Button>
                   </InputGroup>
                 )
               }}
@@ -181,14 +208,14 @@ export default function EditActionForm(props: Props) {
                 return (
                   <InputGroup>
                     <Form.Control id={"form"+field.name} disabled {...field} />
-                    <Button id={"selectDestinationFolderBtn"} onClick={() => openDestinationIdSelect()}>Select...</Button>
+                    <Button id={"selectDestinationFolderBtn"} onClick={() => openDestinationIdSelect(actionId)}>Select...</Button>
                   </InputGroup>
                 )
               }}
             />
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="formName">
+          {/* <Form.Group className="mb-3" controlId="formName">
             <Form.Label>Pattern</Form.Label>
             <Controller
               name="pattern"
@@ -198,7 +225,7 @@ export default function EditActionForm(props: Props) {
                 return <Form.Control id={"form"+field.name} {...field} />
               }}
             />
-          </Form.Group>
+          </Form.Group> */}
 
 
           <Form.Group className="mb-3" controlId="formName">
@@ -209,7 +236,7 @@ export default function EditActionForm(props: Props) {
               rules={{required: true}}
               render={({field}) => {
                 return (
-                  <Form.Select {...field}>
+                  <Form.Select id={"form"+field.name} {...field}>
                     <option selected hidden disabled>Select...</option>
                     <option value="1">Yes</option>
                     <option value="0">No</option>

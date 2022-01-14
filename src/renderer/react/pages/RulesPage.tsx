@@ -1,4 +1,4 @@
-import { Rule } from 'main/enums/sqlipc'
+import { Action, Condition, Rule, Timetable } from 'main/enums/sqlipc'
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
@@ -10,7 +10,7 @@ import SelectTimetableForm from 'tg_components/forms/SelectTimetableForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
 import UsedRulesTable from 'tg_components/tables/UsedRulesTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
-import { changeForm, selectAction, selectCondition, selectTimetable } from 'tg_reducers/UsedRulesPageReducer'
+import { changeForm, clearForm, saveAction, saveCondition, saveTimetable } from 'tg_reducers/UsedRulesPageReducer'
 import { initTable } from 'tg_reducers/UsedRulesTableReducer'
 import { useSql } from '../hooks/utilHooks'
 
@@ -20,9 +20,11 @@ export default function RulesPage() {
 		editId,
 		isCopy,
 		editType,
-		selectedActionId,
-		selectedConditionId,
-		selectedTimetableId,
+		// selectedActionId,
+		// selectedConditionId,
+		// selectedTimetableId,
+		ruleFormState,
+		toReload
 	} = useSelector((state:any) => {
 		return state.usedRulesPage
 	})
@@ -55,11 +57,9 @@ export default function RulesPage() {
 					runSql(Rule.insertRule, {
 						name: data.name,
 						description: data.description,
-						sourceId: data.sourceId,
-						destinationId: data.destinationId,
-						type: data.type,
-						pattern: data.pattern,
-						includeSubfolders: data.includeSubfolders
+						actionId: data.actionId,
+						conditionId: data.conditionId,
+						timetableId: data.timetableId,
 					})
 					getRules()
 					closeForm()
@@ -73,11 +73,9 @@ export default function RulesPage() {
 						id: editId,
 						name: data.name,
 						description: data.description,
-						sourceId: data.sourceId,
-						destinationId: data.destinationId,
-						type: data.type,
-						pattern: data.pattern,
-						includeSubfolders: data.includeSubfolders
+						actionId: data.actionId,
+						conditionId: data.conditionId,
+						timetableId: data.timetableId,
 					})
 					getRules()
 					closeForm()
@@ -90,11 +88,9 @@ export default function RulesPage() {
 					runSql(Rule.insertRule, {
 						name: data.name,
 						description: data.description,
-						sourceId: data.sourceId,
-						destinationId: data.destinationId,
-						type: data.type,
-						pattern: data.pattern,
-						includeSubfolders: data.includeSubfolders
+						actionId: data.actionId,
+						conditionId: data.conditionId,
+						timetableId: data.timetableId,
 					})
 					getRules()
 					closeForm()
@@ -113,23 +109,32 @@ export default function RulesPage() {
 	}
 
 	let closeForm  = () => {
+		dispatch(clearForm())
 		dispatch(closeModal())
 		ruleForm.reset()
 	}
 
 	let onSubmitSelectAction = async (actionId:any, prevId:any) => {
-		dispatch(selectAction(actionId))
-		dispatch(changeForm(prevId,"Rule",false))
+		let action = await runSql(Action.getActionById, actionId)
+		dispatch(saveAction(actionId, action.name))
+		dispatch(changeForm(prevId,"Rule", false, false))
 	}
 
 	let onSubmitSelectCondition = async (conditionId:any, prevId:any) => {
-		dispatch(selectCondition(conditionId))
-		dispatch(changeForm(prevId,"Rule",false))
+		let condition = await runSql(Condition.getConditionById, conditionId)
+		dispatch(saveCondition(conditionId, condition.name))
+		dispatch(changeForm(prevId,"Rule", false, false))
 	}
 
 	let onSubmitSelectTimetable = async (timetableId:any, prevId:any) => {
-		dispatch(selectTimetable(timetableId))
-		dispatch(changeForm(prevId,"Rule",false))
+		let timetable = await runSql(Timetable.getTimetableById, timetableId)
+		dispatch(saveTimetable(timetableId, timetable.name))
+		dispatch(changeForm(prevId,"Rule", false, false))
+	}
+
+	let onApply = async (ruleId:any) => {
+		let ruleFormat = await runSql(Rule.formRule,ruleId)
+		console.log(ruleFormat)
 	}
 
 	const FormSwitch = ({id, type}:any) => {
@@ -140,10 +145,13 @@ export default function RulesPage() {
 				name={formName}
 				isNew={(id == 0)}
 				ruleId={id}
-				selectedActionId={selectedActionId}
-				selectedTimetableId={selectedTimetableId}
-				selectedConditionId={selectedConditionId}
+				// selectedActionId={selectedActionId}
+				// selectedTimetableId={selectedTimetableId}
+				// selectedConditionId={selectedConditionId}
 				onSubmit={onSubmit(ruleForm.handleSubmit, id, isCopy)}
+				onApply={onApply}
+				toReload={toReload}
+				ruleFormState={ruleFormState}
 			/>
 		} else if(type == "ActionSelect"){
 			form = <SelectActionForm
@@ -168,7 +176,7 @@ export default function RulesPage() {
 
 			<Card.Header id="pageTitle">
 				<h3>
-					Used folders
+					Used rules
 				</h3>
 			</Card.Header>
 			<Card.Body>

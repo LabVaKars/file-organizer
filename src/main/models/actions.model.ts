@@ -1,4 +1,5 @@
 
+import { processSql } from ".";
 import { Action } from "../enums/sqlipc";
 import { knSqlite } from "../main";
 
@@ -32,8 +33,8 @@ actionSql.set(Action.getActionById, ([id]:any) => {
         "a.description",
         "sf.id as sourceId",
         "df.id as destinationId",
-        "sf.name as source",
-        "df.name as destination",
+        "sf.path as source",
+        "df.path as destination",
         "a.type",
         "a.pattern",
         "a.includeSubfolders"
@@ -48,8 +49,8 @@ actionSql.set(Action.getActionById, ([id]:any) => {
     return result
 })
 
-actionSql.set(Action.insertAction, async ([folder]: any) => {
-    let toInsert = folder
+actionSql.set(Action.insertAction, async ([action]: any) => {
+    let toInsert = action
     delete toInsert.id
     const trx = await knSqlite.transaction();
     await trx.insert(toInsert).into("actions")
@@ -58,6 +59,13 @@ actionSql.set(Action.insertAction, async ([folder]: any) => {
 
     let newId = returnId.id
     console.log("newId", newId)
+    return newId
+})
+
+actionSql.set(Action.copyAction, async ([id]: any) => {
+    let toCopy = await processSql(Action.getActionById,[id])
+    delete toCopy.id
+    let newId = await processSql(Action.insertAction, [toCopy])
     return newId
 })
 

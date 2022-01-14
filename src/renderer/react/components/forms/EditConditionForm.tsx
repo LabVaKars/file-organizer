@@ -39,7 +39,8 @@ export default function EditConditionForm(props: Props) {
     form.setValue("description", result.description)
     form.setValue("assosiation", result.assosiation)
     console.log('In React Renderer', result)
-}
+  }
+
 
   useEffect(() => {
     console.log("Getting Condition")
@@ -57,7 +58,7 @@ export default function EditConditionForm(props: Props) {
             <Controller
               name="name"
               control={form.control}
-              rules={{required: true}}
+              rules={{required: false}}
               defaultValue={"New Condition"}
               render={({field}) => {
                 return <Form.Control id={"form"+field.name} {...field}/>
@@ -82,10 +83,16 @@ export default function EditConditionForm(props: Props) {
             <Controller
               name="assosiation"
               control={form.control}
-              rules={{required: true}}
+              rules={{required: false}}
               defaultValue={"OR"}
               render={({field}) => {
-                return <Form.Control id={"form"+field.name} {...field} />
+                return (
+                  <Form.Select id={"form"+field.name} {...field}>
+                    <option selected hidden disabled>Select...</option>
+                    <option value="AND">Fulfill all conditions(AND)</option>
+                    <option value="OR">Fulfill any of conditions(OR)</option>
+                  </Form.Select>
+                )
               }}
             />
           </Form.Group>

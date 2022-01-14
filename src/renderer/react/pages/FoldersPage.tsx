@@ -27,6 +27,7 @@ export default function FoldersPage() {
 
 	const defaultValues = {
 		name: "",
+		description: "",
 		path: ""
 	  }
 

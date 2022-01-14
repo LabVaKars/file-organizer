@@ -157,35 +157,9 @@ conditionSql.set(Condition.insertCondition, async ([condition]: any) => {
     await trx.commit()
 
     let newId = returnId.id
-
-    // knSqlite.transaction(function(trx) {
-    //     let statement = knSqlite.returning("id").insert(toInsert).into("conditions")
-    //     newId = statement
-    //     .transacting(trx)
-    //     .then(trx.commit)
-    //     console.log(Condition.insertCondition, statement.toSQL())
-    // })
     return newId
 })
 
-// conditionSql.set(Condition.insertSubCondition, async ([condition]: any) => {
-//     let toInsert = condition
-//     delete toInsert.id
-//     let newId
-//     const trx = await knSqlite.transaction();
-//     await trx.insert(toInsert).into("conditions")
-//     newId = await trx.raw("SELECT last_insert_rowid()")
-//     await trx.commit()
-
-//     // knSqlite.transaction(function(trx) {
-//     //     let statement = knSqlite.returning("id").insert(toInsert).into("conditions")
-//     //     newId = statement
-//     //     .transacting(trx)
-//     //     .then(trx.commit)
-//     //     console.log(Condition.insertCondition, statement.toSQL())
-//     // })
-//     return newId
-// })
 
 conditionSql.set(Condition.copyCondition, async ([id]: any) => {
     let processedIds = [id]

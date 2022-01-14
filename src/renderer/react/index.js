@@ -9,8 +9,6 @@ import {DndProvider} from 'react-dnd'
 import Backend from 'react-dnd-html5-backend'
 import TableFormReducer from 'tg_reducers/TableFormReducer'
 
-import axios from 'axios'
-
 import App from 'renderer/react/App'
 import UnauthorizedPage from 'tg_pages/UnauthorizedPage'
 

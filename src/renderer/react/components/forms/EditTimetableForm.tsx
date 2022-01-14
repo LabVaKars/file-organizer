@@ -117,7 +117,7 @@ export default function EditTimetableForm(props: Props) {
                 rules={{required: true}}
                 render={({field}) => {
                   return (
-                    <Form.Select {...field}>
+                    <Form.Select id={"form"+field.name} {...field}>
                       <option selected hidden disabled>Select...</option>
                       <option value="second">Seconds</option>
                       <option value="minute">Minutes</option>

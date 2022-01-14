@@ -3,7 +3,8 @@ export enum Folder {
     getFolderById = "folder:getFolderById",
     insertFolder = "folder:insertFolder",
     updateFolder = "folder:updateFolder",
-    deleteFolder = "folder:deleteFolder"
+    deleteFolder = "folder:deleteFolder",
+    copyFolder = "folder:copyFolder"
 }
 
 export enum Filter {
@@ -12,7 +13,8 @@ export enum Filter {
     getPrevConditionId = "filter:getPrevConditionId",
     insertFilter = "filter:insertFilter",
     updateFilter = "filter:updateFilter",
-    deleteFilter = "filter:deleteFilter"
+    deleteFilter = "filter:deleteFilter",
+    copyFilter = "filter:copyFilter"
 }
 
 export enum Action {
@@ -20,7 +22,8 @@ export enum Action {
     getActionById = "action:getActionById",
     insertAction = "action:insertAction",
     updateAction = "action:updateAction",
-    deleteAction = "action:deleteAction"
+    deleteAction = "action:deleteAction",
+    copyAction = "action:copyAction"
 }
 
 export enum Timetable {
@@ -28,7 +31,8 @@ export enum Timetable {
     getTimetableById = "timetable:getTimetableById",
     insertTimetable = "timetable:insertTimetable",
     updateTimetable = "timetable:updateTimetable",
-    deleteTimetable = "timetable:deleteTimetable"
+    deleteTimetable = "timetable:deleteTimetable",
+    copyTimetable = "timetable:copyTimetable"
 }
 
 export enum Rule {
@@ -36,7 +40,9 @@ export enum Rule {
     getRuleById = "rule:getRuleById",
     insertRule = "rule:insertRule",
     updateRule = "rule:updateRule",
-    deleteRule = "rule:deleteRule"
+    deleteRule = "rule:deleteRule",
+    copyRule = "rule:copyRule",
+    formRule = "rule:formRule"
 }
 
 export enum Condition {

@@ -10,9 +10,10 @@ import SelectSubCondForm from 'tg_components/forms/SelectSubCondForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
 import UsedConditionsTable from 'tg_components/tables/UsedConditionsTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
-import { changeForm, selectFilter, selectSubCond } from 'tg_reducers/UsedConditionsPageReducer'
-import { initTable } from 'tg_reducers/UsedConditionsTableReducer'
-import { useSql } from '../hooks/utilHooks'
+import { changeForm, removeSelect, selectFilter, selectSubCond } from 'tg_reducers/UsedConditionsPageReducer'
+import {initTable as initTableCond} from 'tg_reducers/UsedConditionsTableReducer'
+import {initTable as initTableSubCond} from 'tg_reducers/SubConditionsTableReducer'
+import { filterValueToJson, useSql } from '../hooks/utilHooks'
 
 export default function ConditionsPage() {
 
@@ -27,6 +28,10 @@ export default function ConditionsPage() {
 	} = useSelector((state:any) => {
 		return state.usedConditionsPage
 	})
+
+	useEffect(() => {
+		console.log("EDIT ID CHANGED!!!!!!!!!!!!!!!!!!!!!!")
+	},[editId])
 
 	let {
 		modalShow
@@ -47,7 +52,7 @@ export default function ConditionsPage() {
 	const getConditions = async () => {
 		console.log("Getting conditions from")
 		let result = await runSql(Condition.getConditions)
-		dispatch(initTable(result))
+		dispatch(initTableCond(result))
 		console.log('In React Renderer', result)
 		return
 	}
@@ -64,15 +69,18 @@ export default function ConditionsPage() {
 		}
     })
 
+
 	let onSubmitFilter = (handleSubmit:any, filterId:any, prevId:any) => {
 		return () => {
 			let onSubmit= async (data:any) => {
 				console.log("Submitting filter form")
 				await runSql(Filter.updateFilter, {
-				id: filterId,
-				field: data._field,
-				comparator: data._comparator,
-				value: data._value
+					id: filterId,
+					name: data._name,
+					description: data._description,
+					field: data._field,
+					comparator: data._comparator,
+					value: filterValueToJson(data)
 				})
 				let prevPrevId = await runSql(Filter.getPrevConditionId, prevId)
 				dispatch(changeForm(prevId,prevPrevId,"Condition",false))
@@ -93,6 +101,7 @@ export default function ConditionsPage() {
 				})
 				if(prevId == 0){ // root
 					dispatch(closeModal())
+					getConditions()
 				} else {
 					let prevPrevId = await runSql(Condition.getPrevConditionId, prevId)
 					dispatch(changeForm(prevId,prevPrevId,"Condition",false))
@@ -102,9 +111,7 @@ export default function ConditionsPage() {
 		}
 	}
 
-	useEffect(() => {
 
-	},[selectedFilterId])
 
 	let onSubmitSelectFilter = async (filterId:any, prevId:any) => {
 		dispatch(selectFilter(filterId))
@@ -117,6 +124,34 @@ export default function ConditionsPage() {
 		let prevPrevId = await runSql(Condition.getPrevConditionId, prevId)
 		dispatch(changeForm(prevId,prevPrevId,"Condition",false))
 	}
+
+	const getSubConditions = async (conditionId: any) => {
+		console.log("Getting conditions from")
+		let result = await runSql(Condition.getSubConditions, conditionId)
+		dispatch(initTableSubCond(result))
+		console.log('In React Renderer', result)
+	  }
+
+	  const addExistingFilter = async (editId:any, existId:any) => {
+		await runSql(Condition.addFilter, editId, existId)
+		dispatch(removeSelect())
+		getSubConditions(editId)
+	  }
+
+	  const addExistingSubCond = async (editId:any, existId:any) => {
+		await runSql(Condition.addSubCondition, editId, existId)
+		dispatch(removeSelect())
+		getSubConditions(editId)
+	  }
+
+
+	  useEffect(() => {
+		if(selectedFilterId != 0) addExistingFilter(editId, selectedFilterId)
+	  },[selectedFilterId])
+
+	  useEffect(() => {
+		if(selectedSubCondId != 0) addExistingSubCond(editId, selectedSubCondId)
+	  },[selectedSubCondId])
 
 	const FormSwitch = ({id, prevId, type, links}:any) => {
 		let form = <></>
@@ -164,7 +199,7 @@ export default function ConditionsPage() {
 
 			<Card.Header id="pageTitle">
 				<h3>
-					Used folders
+					Used conditions
 				</h3>
 			</Card.Header>
 			<Card.Body>

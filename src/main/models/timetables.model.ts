@@ -1,4 +1,5 @@
 
+import { processSql } from ".";
 import { Timetable } from "../enums/sqlipc";
 import { knSqlite } from "../main";
 
@@ -48,6 +49,13 @@ timetableSql.set(Timetable.insertTimetable, async ([timetable]: any) => {
 
     let newId = returnId.id
     console.log("newId", newId)
+    return newId
+})
+
+timetableSql.set(Timetable.copyTimetable, async ([id]: any) => {
+    let toCopy = await processSql(Timetable.getTimetableById,[id])
+    delete toCopy.id
+    let newId = await processSql(Timetable.insertTimetable, [toCopy])
     return newId
 })
 

@@ -17,7 +17,19 @@ export default function HomePage() {
                     </Card.Header>
                     <Card.Body>
                         <h5>Step 1:</h5>
-                        <p>WIP...</p>
+                        <p>Select folders</p>
+                        <h5>Step 2:</h5>
+                        <p>Define filters</p>
+                        <h5>Step 3:</h5>
+                        <p>Define conditions</p>
+                        <h5>Step 4:</h5>
+                        <p>Define actions</p>
+                        <h5>Step 5:</h5>
+                        <p>Define timetables</p>
+                        <h5>Step 6:</h5>
+                        <p>Define rules</p>
+                        <h5>Step 7:</h5>
+                        <p>File organizer will use defined rules for file organization</p>
                     </Card.Body>
                 </Card>
             </div>

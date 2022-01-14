@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Button, Container } from 'react-bootstrap'
 import { Action } from 'main/enums/sqlipc'
 import SortFiltTable from './SortFiltTable'
-import { changeForm } from 'tg_reducers/UsedActionsPageReducer'
+import { changeForm, clearForm } from 'tg_reducers/UsedActionsPageReducer'
 import { showModal } from 'tg_reducers/OpenedModalReducer'
 import { DefaultColumnFilter } from 'renderer/react/hooks/tableUtilHooks'
 import { useSql } from 'renderer/react/hooks/utilHooks'
@@ -135,17 +135,18 @@ export default function UsedActionsTable(props: Props) {
   }
 
   const copyAction = (id:any) => {
-    dispatch(changeForm(id, "Action", true))
+    dispatch(changeForm(id, "Action", true, true))
     dispatch(showModal())
   }
 
   const addAction = () => {
-    dispatch(changeForm(0, "Action", false))
+    dispatch(clearForm)
+    dispatch(changeForm(0, "Action", false, false))
     dispatch(showModal())
   }
 
   const editAction = (id:any) => {
-    dispatch(changeForm(id, "Action", false))
+    dispatch(changeForm(id, "Action", false, true))
     dispatch(showModal())
   }
 

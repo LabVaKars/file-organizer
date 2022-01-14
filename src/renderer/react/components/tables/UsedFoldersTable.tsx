@@ -48,7 +48,7 @@ export default function UsedFoldersTable(props: any) {
         {
           Header: 'Actions',
           accessor: 'id',
-          id: 'table_action',
+          id: 'action',
           disableFilters:true,
           disableSortBy:true,
           Cell: ({value}:any) => {

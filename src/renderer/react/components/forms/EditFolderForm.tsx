@@ -49,8 +49,10 @@ export default function EditFolderForm(props: Props) {
         <Form id={name} >
           <Button id={"selectOsFolderBtn"} variant="success" type="button" onClick={async () => {
             let {path, name} = await selectFolder()
-            form.setValue("path", path)
-            form.setValue("name", name)
+            console.log("path",path)
+            console.log("name",name)
+            form.setValue("path", path || "")
+            form.setValue("name", name || "")
           }}>
             Select Folder
           </Button>

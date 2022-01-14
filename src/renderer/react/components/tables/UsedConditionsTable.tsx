@@ -97,8 +97,8 @@ export default function UsedConditionsTable(props:Props) {
         // console.log("EditId", editId)
     }
 
-    const addCondition = () => {
-      runSql(Condition.insertCondition, {
+    const addCondition = async () => {
+      await runSql(Condition.insertCondition, {
           name: "New Condition",
           description: "",
           assosiation: "OR"

@@ -1,4 +1,5 @@
 
+import { processSql } from ".";
 import { Folder } from "../enums/sqlipc";
 import { knSqlite } from "../main";
 
@@ -31,6 +32,13 @@ folderSql.set(Folder.insertFolder, async ([folder]: any) => {
 
     let newId = returnId.id
     console.log("newId", newId)
+    return newId
+})
+
+folderSql.set(Folder.copyFolder, async ([id]: any) => {
+    let toCopy = await processSql(Folder.getFolderById,[id])
+    delete toCopy.id
+    let newId = await processSql(Folder.insertFolder, [toCopy])
     return newId
 })
 

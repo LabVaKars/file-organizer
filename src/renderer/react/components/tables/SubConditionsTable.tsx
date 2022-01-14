@@ -74,14 +74,10 @@ export default function SubConditionsTable(props: Props) {
               return (
               <>
                 <div className="d-flex justify-content-around">
-                  {/* <Link to={editUrl}> */}
-                    <Button id={"editSubConditionBtn"} type="button" form={formName} variant="secondary" onClick={() => editSubCondition(handleSubmit, conditionId, value, row.values.type)}>
-                      Edit
-                    </Button>
-                  {/* </Link> */}
-                  <Button id={"deleteSubConditionBtn"} variant="danger" onClick={() => {
-                    deleteCondition(conditionId, value, row.values.type)
-                  }}>
+                  <Button id={"editSubConditionBtn"} type="button" form={formName} variant="secondary" onClick={() => editSubCondition(handleSubmit, conditionId, value, row.values.type)}>
+                    Edit
+                  </Button>
+                  <Button id={"deleteSubConditionBtn"} type="button" variant="danger" onClick={() => {deleteCondition(conditionId, value, row.values.type)}}>
                     Delete
                   </Button>
                 </div>
@@ -155,9 +151,9 @@ export default function SubConditionsTable(props: Props) {
 
   const deleteCondition = async (conditionId:any, deletableId:any, type:any) => {
     if(type == "Filter"){
-      await runSql(Condition.removeFilter, deletableId)
+      await runSql(Condition.removeFilter, conditionId, deletableId)
     } else if(type == "Condition"){
-      await runSql(Condition.removeCondition, deletableId)
+      await runSql(Condition.removeCondition, conditionId, deletableId)
     }
     getSubConditions(conditionId)
   }
@@ -208,14 +204,14 @@ export default function SubConditionsTable(props: Props) {
     <>
       <Container className="mt-3">
         <ButtonGroup aria-label="Basic example">
-          <DropdownButton title="Add new" id="bg-nested-dropdown">
-            <Dropdown.Item eventKey="1" onClick={() => addSubFilter(conditionId, parentId)}>Filter</Dropdown.Item>
-            <Dropdown.Item eventKey="2" onClick={() => addSubCondition(conditionId, parentId)}>Condition</Dropdown.Item>
+          <DropdownButton title="Add new" id="addNewBtn">
+            <Dropdown.Item id={"addSubFilterBtn"} eventKey="1" onClick={() => addSubFilter(conditionId, parentId)}>Filter</Dropdown.Item>
+            <Dropdown.Item id={"addSubConditionBtn"} eventKey="2" onClick={() => addSubCondition(conditionId, parentId)}>Condition</Dropdown.Item>
           </DropdownButton>
           <div className="ml-1 mr-1">&nbsp; Or &nbsp;</div>
-          <DropdownButton title="Add existing" id="bg-nested-dropdown">
-            <Dropdown.Item eventKey="3" onClick={() => selectFilter(conditionId, selectedFilterId)}>Filter</Dropdown.Item>
-            <Dropdown.Item eventKey="4" onClick={() => selectSubCond(conditionId, selectedSubCondId)}>Condition</Dropdown.Item>
+          <DropdownButton title="Add existing" id="addExistingBtn">
+            <Dropdown.Item id={"selectFilterBtn"} eventKey="3" onClick={() => selectFilter(conditionId, selectedFilterId)}>Filter</Dropdown.Item>
+            <Dropdown.Item id={"selectSubCondBtn"} eventKey="4" onClick={() => selectSubCond(conditionId, selectedSubCondId)}>Condition</Dropdown.Item>
           </DropdownButton>
         </ButtonGroup>
       </Container>

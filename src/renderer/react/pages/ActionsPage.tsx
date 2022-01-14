@@ -1,4 +1,4 @@
-import { Action } from 'main/enums/sqlipc'
+import { Action, Folder } from 'main/enums/sqlipc'
 import React from 'react'
 import { Card } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
@@ -8,7 +8,8 @@ import SelectFolderForm from 'tg_components/forms/SelectFolderForm'
 import SimpleFormModal from 'tg_components/SimpleFormModal'
 import UsedActionsTable from 'tg_components/tables/UsedActionsTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
-import { changeForm, selectDestinationFolder, selectSourceFolder } from 'tg_reducers/UsedActionsPageReducer'
+// import { closeModal } from 'tg_reducers/OpenedModalReducer'
+import { clearForm, moveToForm, saveDestinationFolder, saveSourceFolder } from 'tg_reducers/UsedActionsPageReducer'
 import { initTable } from 'tg_reducers/UsedActionsTableReducer'
 import { useSql } from '../hooks/utilHooks'
 
@@ -18,8 +19,10 @@ export default function ActionsPage() {
 		editId,
 		isCopy,
 		editType,
-		selectedSourceFolderId,
-		selectedDestinationFolderId
+		// selectedSourceFolderId,
+		// selectedDestinationFolderId,
+		actionFormState,
+		toReload
 	} = useSelector((state:any) => {
 		return state.usedActionsPage
 	})
@@ -30,13 +33,18 @@ export default function ActionsPage() {
 		return state.openedModal
 	})
 
-	const defaultValues = {
-		name: "",
-		path: ""
-	  }
-
 	let actionForm = useForm({
-		defaultValues: defaultValues
+		defaultValues: {
+			name: "",
+			description: "",
+			type: "",
+			sourceId: 0,
+			source: "",
+			destinationId: 0,
+			destination: "",
+			pattern: "",
+			includeSubfolders: ""
+		}
 	})
 
 	let dispatch = useDispatch()
@@ -109,19 +117,33 @@ export default function ActionsPage() {
 		console.log('In React Renderer', result)
 	}
 
+	// const clearForm = () => {
+	// 	let formValues = actionForm.getValues()
+	// 	console.log("Before", formValues)
+	// 	for(const key of Object.keys(formValues)){
+	// 		console.log(key)
+	// 		actionForm.setValue(key, "")
+	// 	}
+	// 	console.log("After", actionForm.getValues())
+
+	// }
+
 	let closeForm  = () => {
+		dispatch(clearForm())
 		dispatch(closeModal())
 		actionForm.reset()
 	}
 
 	let onSubmitSelectSourceFolder = async (folderId:any, prevId:any) => {
-		dispatch(selectSourceFolder(folderId))
-		dispatch(changeForm(prevId,"Action",false))
+		let folder =  await runSql(Folder.getFolderById, folderId)
+		dispatch(saveSourceFolder(folderId, folder.path))
+		dispatch(moveToForm("Action", false))
 	}
 
 	let onSubmitSelectDestinationFolder = async (folderId:any, prevId:any) => {
-		dispatch(selectDestinationFolder(folderId))
-		dispatch(changeForm(prevId,"Action",false))
+		let folder =  await runSql(Folder.getFolderById, folderId)
+		dispatch(saveDestinationFolder(folderId, folder.path))
+		dispatch(moveToForm("Action", false))
 	}
 
 	const FormSwitch = ({id, type}:any) => {
@@ -132,9 +154,11 @@ export default function ActionsPage() {
 				name={formName}
 				isNew={(id == 0)}
 				actionId={id}
-				selectedSourceFolderId={selectedSourceFolderId}
-				selectedDestinationFolderId={selectedDestinationFolderId}
+				// selectedSourceFolderId={selectedSourceFolderId}
+				// selectedDestinationFolderId={selectedDestinationFolderId}
 				onSubmit={onSubmit(actionForm.handleSubmit, id, isCopy)}
+				toReload={toReload}
+				actionFormState={actionFormState}
 			/>
 		} else if(type == "SourceFolderSelect"){
 			form = <SelectFolderForm
@@ -155,7 +179,7 @@ export default function ActionsPage() {
 
 			<Card.Header id="pageTitle">
 				<h3>
-					Used folders
+					Used actions
 				</h3>
 			</Card.Header>
 			<Card.Body>

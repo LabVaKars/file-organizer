@@ -35,8 +35,21 @@ export default function SelectFilterForm(props: Props) {
             id: 'id',
             disableFilters:true,
             disableSortBy:true
-
         },
+        {
+          Header: 'Name',
+          accessor: 'name',
+          id: 'name',
+          Filter: DefaultColumnFilter,
+          filter: 'contain'
+      },
+      {
+          Header: 'Description',
+          accessor: 'description',
+          id: 'description',
+          Filter: DefaultColumnFilter,
+          filter: 'contain'
+      },
         {
             Header: 'Field',
             accessor: 'field',

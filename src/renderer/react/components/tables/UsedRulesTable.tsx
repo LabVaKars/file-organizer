@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Button, Container } from 'react-bootstrap'
 import { Rule } from 'main/enums/sqlipc'
 import SortFiltTable from './SortFiltTable'
-import { changeForm } from 'tg_reducers/UsedRulesPageReducer'
+import { changeForm, clearForm } from 'tg_reducers/UsedRulesPageReducer'
 import { showModal } from 'tg_reducers/OpenedModalReducer'
 import { DefaultColumnFilter } from 'renderer/react/hooks/tableUtilHooks'
 import { useSql } from 'renderer/react/hooks/utilHooks'
@@ -128,17 +128,18 @@ export default function UsedRulesTable(props: Props) {
   }
 
   const copyRule = (id:any) => {
-    dispatch(changeForm(id, "Rule", true))
+    dispatch(changeForm(id, "Rule", true, true))
     dispatch(showModal())
   }
 
   const addRule = () => {
-    dispatch(changeForm(0, "Rule", false))
+    dispatch(clearForm)
+    dispatch(changeForm(0, "Rule", false, false))
     dispatch(showModal())
   }
 
   const editRule = (id:any) => {
-    dispatch(changeForm(id, "Rule", false))
+    dispatch(changeForm(id, "Rule", false, true))
     dispatch(showModal())
   }
 

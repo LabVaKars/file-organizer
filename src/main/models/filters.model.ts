@@ -1,10 +1,11 @@
 
+import { processSql } from ".";
 import { Filter } from "../enums/sqlipc";
 import { knSqlite } from "../main";
 
 let filterSql = new Map()
 filterSql.set(Filter.getFilters, () => {
-    let statement = knSqlite.select("id","field","comparator","value").from("filters")
+    let statement = knSqlite.select("id","name","description","field","comparator","value").from("filters")
     console.log(Filter.getFilters, statement.toSQL())
     let result = statement.then((rows: any) => {
         return rows
@@ -13,7 +14,7 @@ filterSql.set(Filter.getFilters, () => {
 })
 
 filterSql.set(Filter.getFilterById, ([id]:any) => {
-    let statement = knSqlite.select("id","field","comparator","value").from("filters").where({id})
+    let statement = knSqlite.select("id","name","description","field","comparator","value").from("filters").where({id})
     console.log(Filter.getFilterById, statement.toSQL())
     let result = statement.then((rows: any) => {
         return rows[0] || 0
@@ -40,14 +41,13 @@ filterSql.set(Filter.insertFilter, async ([filter]: any) => {
     await trx.commit()
 
     let newId = returnId.id
-    // knSqlite.transaction(function(trx) {
-    //     let statement = knSqlite.returning("id").insert(toInsert).into("filters")
-    //     newId = statement
+    return newId
+})
 
-    //     .transacting(trx)
-    //     .then(trx.commit)
-    //     console.log(Filter.insertFilter, statement.toSQL())
-    // })
+filterSql.set(Filter.copyFilter, async ([id]: any) => {
+    let toCopy = await processSql(Filter.getFilterById,[id])
+    delete toCopy.id
+    let newId = await processSql(Filter.insertFilter, [toCopy])
     return newId
 })
 

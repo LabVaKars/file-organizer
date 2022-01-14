@@ -8,7 +8,7 @@ import SimpleFormModal from 'tg_components/SimpleFormModal'
 import UsedFiltersTable from 'tg_components/tables/UsedFiltersTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
 import { initTable } from 'tg_reducers/UsedFiltersTableReducer'
-import { useSql } from '../hooks/utilHooks'
+import { filterValueToJson, useSql } from '../hooks/utilHooks'
 
 export default function FiltersPage() {
 
@@ -39,20 +39,21 @@ export default function FiltersPage() {
 		let result = await runSql(Filter.getFilters)
 		dispatch(initTable(result))
 		console.log('In React Renderer', result)
-	  }
+	}
 
     const onSubmit = (handleSubmit:any, editId:any, isCopy:any) => {
 		if(editId == 0) {
 			return () => {
 				let onSubmit = (data: any) => {
 					runSql(Filter.insertFilter, {
-					field: data._field,
-					comparator: data._comparator,
-					value: data._value
+						name: data._name,
+						description: data._description,
+						field: data._field,
+						comparator: data._comparator,
+						value: filterValueToJson(data)
 					})
 					getFilters()
 					closeForm()
-					filterForm.reset()
 				}
 				handleSubmit(onSubmit)()
 			}
@@ -61,14 +62,15 @@ export default function FiltersPage() {
 			  	console.log("Submitting form")
 				let onSubmit = (data: any) => {
 					runSql(Filter.updateFilter, {
-					id: editId,
-					field: data._field,
-					comparator: data._comparator,
-					value: data._value
+						id: editId,
+						name: data._name,
+						description: data._description,
+						field: data._field,
+						comparator: data._comparator,
+						value: filterValueToJson(data)
 					})
 					getFilters()
 					closeForm()
-					filterForm.reset()
 				}
 				handleSubmit(onSubmit)()
 			}
@@ -76,13 +78,14 @@ export default function FiltersPage() {
 		  return () => {
 				let onSubmit = (data: any) => {
 					runSql(Filter.insertFilter, {
-					field: data._field,
-					comparator: data._comparator,
-					value: data._value
+						name: data._name,
+						description: data._description,
+						field: data._field,
+						comparator: data._comparator,
+						value: filterValueToJson(data)
 					})
 					getFilters()
 					closeForm()
-					filterForm.reset()
 				}
 				handleSubmit(onSubmit)()
 			}
@@ -99,7 +102,7 @@ export default function FiltersPage() {
 		<>
 			<Card.Header id="pageTitle">
 				<h3>
-					Used folders
+					Used filters
 				</h3>
 			</Card.Header>
 

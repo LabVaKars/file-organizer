@@ -20,6 +20,7 @@ import { processSql } from './models';
 import { dropDB, setupDB } from './db/dbSetup';
 import { getFolderPath } from './fsUtils';
 import knex from 'knex'
+import { applyRule } from './fsApply';
 
 export let dbPath = './devsqlite.db'
 
@@ -72,19 +73,26 @@ ipcMain.handle('run-sql', async (event, arg) => {
 
 ipcMain.handle('file-dialog', async (event, arg) => {
   console.log("got signal from renderer: file-dialog")
-  let folderPath = (await getFolderPath()).filePaths[0]
+  let folderPath = (await getFolderPath()).filePaths[0] || ""
   console.log("From ipc Main", folderPath)
-  let folderName = path.parse(folderPath).name
+  let folderName = (folderPath.length>0) ? path.parse(folderPath).name : ""
   console.log(folderName)
   return {path: folderPath, name: folderName};
 })
 
-ipcMain.on('ipc-example', async (event, arg) => {
-  console.log("got signal from renderer: ipc-example")
-  const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
-  console.log(msgTemplate(arg));
-  event.reply('ipc-example', msgTemplate('pong'));
-});
+ipcMain.handle('rule-apply', async (event, arg) => {
+  console.log(arg)
+  console.log("got signal from renderer: rule-apply")
+  applyRule(arg)
+  return ;
+})
+
+// ipcMain.on('ipc-example', async (event, arg) => {
+//   console.log("got signal from renderer: ipc-example")
+//   const msgTemplate = (pingPong: string) => `IPC test: ${pingPong}`;
+//   console.log(msgTemplate(arg));
+//   event.reply('ipc-example', msgTemplate('pong'));
+// });
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

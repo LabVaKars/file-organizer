@@ -1,12 +1,12 @@
 
-import { Rule, Condition, Timetable, Action } from 'main/enums/sqlipc';
+import { Rule } from 'main/enums/sqlipc';
 import React, { useEffect } from 'react'
 
 import { Button, Container, Form, InputGroup } from 'react-bootstrap'
 import { Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useSql } from 'renderer/react/hooks/utilHooks';
-import { changeForm, removeSelect } from 'tg_reducers/UsedRulesPageReducer';
+import { moveToForm, saveForm } from 'tg_reducers/UsedRulesPageReducer';
 
 
 interface Props {
@@ -14,10 +14,13 @@ interface Props {
   name: string,
   isNew: boolean,
   ruleId: number,
-  selectedActionId: number,
-  selectedTimetableId: number,
-  selectedConditionId: number,
-  onSubmit: any
+  // selectedActionId: number,
+  // selectedTimetableId: number,
+  // selectedConditionId: number,
+  onApply: any,
+  onSubmit: any,
+  toReload: any,
+  ruleFormState: any
 };
 
 export default function EditRuleForm(props: Props) {
@@ -29,13 +32,34 @@ export default function EditRuleForm(props: Props) {
     name,
     isNew,
     ruleId,
-    selectedActionId,
-    selectedTimetableId,
-    selectedConditionId,
+    // selectedActionId,
+    // selectedTimetableId,
+    // selectedConditionId,
+    onApply,
     onSubmit,
+    toReload,
+    ruleFormState
   } = props;
 
   let dispatch = useDispatch()
+
+  useEffect(() => {
+    if(toReload){
+      if (!isNew) {
+
+        getRule(ruleId)
+      }
+
+    } else {
+      getSavedRule(form, ruleFormState)
+    }
+  },[ruleId])
+
+  const getSavedRule = (form:any, formState: any) => {
+    for(const [key, value] of Object.entries(formState)){
+      form.setValue(key, value)
+    }
+  }
 
   const getRule = async (ruleId:any) => {
     console.log("Getting rules from")
@@ -44,66 +68,67 @@ export default function EditRuleForm(props: Props) {
     form.setValue("name", result.name)
     form.setValue("description", result.description)
     form.setValue("actionId", result.actionId)
-    form.setValue("conditionId", result.conditionId)
-    form.setValue("timetableId", result.timetableId)
     form.setValue("action", result.action)
+    form.setValue("conditionId", result.conditionId)
     form.setValue("condition", result.condition)
+    form.setValue("timetableId", result.timetableId)
     form.setValue("timetable", result.timetable)
     console.log('In React Renderer', result)
   }
 
-  const addAction = async (actionId:number) => {
-    let action =  await runSql(Action.getActionById, actionId)
-    form.setValue("actionId", actionId)
-    form.setValue("action", action.path)
-    dispatch(removeSelect())
-  }
+  // const addAction = async (actionId:number) => {
+  //   let action =  await runSql(Action.getActionById, actionId)
+  //   form.setValue("actionId", actionId)
+  //   form.setValue("action", action.path)
+  //   dispatch(removeSelect())
+  // }
 
-  const addCondition = async (conditionId:number) => {
-    let condition =  await runSql(Condition.getConditionById, conditionId)
-    form.setValue("conditionId", conditionId)
-    form.setValue("condition", condition.path)
-    dispatch(removeSelect())
-  }
+  // const addCondition = async (conditionId:number) => {
+  //   let condition =  await runSql(Condition.getConditionById, conditionId)
+  //   form.setValue("conditionId", conditionId)
+  //   form.setValue("condition", condition.path)
+  //   dispatch(removeSelect())
+  // }
 
-  const addTimetable = async (timetableId:number) => {
-    let timetable =  await runSql(Timetable.getTimetableById, timetableId)
-    form.setValue("timetableId", timetableId)
-    form.setValue("timetable", timetable.path)
-    dispatch(removeSelect())
-  }
-
-  useEffect(() => {
-    console.log(ruleId)
-    if (!isNew) getRule(ruleId)
-  },[ruleId])
+  // const addTimetable = async (timetableId:number) => {
+  //   let timetable =  await runSql(Timetable.getTimetableById, timetableId)
+  //   form.setValue("timetableId", timetableId)
+  //   form.setValue("timetable", timetable.path)
+  //   dispatch(removeSelect())
+  // }
 
 
-  useEffect(() => {
-    if(selectedActionId != 0) addAction(selectedActionId)
-  },[selectedActionId])
 
-  useEffect(() => {
-    if(selectedConditionId != 0) addCondition(selectedConditionId)
-  },[selectedConditionId])
+  // useEffect(() => {
+  //   if(selectedActionId != 0) addAction(selectedActionId)
+  // },[selectedActionId])
 
-  useEffect(() => {
-    if(selectedTimetableId != 0) addTimetable(selectedTimetableId)
-  },[selectedTimetableId])
+  // useEffect(() => {
+  //   if(selectedConditionId != 0) addCondition(selectedConditionId)
+  // },[selectedConditionId])
+
+  // useEffect(() => {
+  //   if(selectedTimetableId != 0) addTimetable(selectedTimetableId)
+  // },[selectedTimetableId])
 
 
   let openActionIdSelect = () => {
-    dispatch(changeForm(ruleId, "ActionSelect", false))
+    console.log(form.getValues())
+    dispatch(saveForm(form.getValues()))
+    dispatch(moveToForm("ActionSelect", false))
   }
 
   let openConditionIdSelect = () => {
-    dispatch(changeForm(ruleId, "ConditionSelect", false))
+    console.log(form.getValues())
+    dispatch(saveForm(form.getValues()))
+    dispatch(moveToForm("ConditionSelect", false))
   }
 
   let openTimetableIdSelect = () => {
-    dispatch(changeForm(ruleId, "TimetableSelect", false))
+    console.log(form.getValues())
+    dispatch(saveForm(form.getValues()))
+    dispatch(moveToForm("TimetableSelect", false))
   }
-
 
   return (
     <>
@@ -210,8 +235,30 @@ export default function EditRuleForm(props: Props) {
             />
           </Form.Group>
 
+          <Form.Group className="mb-3" controlId="formName">
+            <Form.Label>Active</Form.Label>
+            <Controller
+              name="active"
+              control={form.control}
+              rules={{required: true}}
+              defaultValue={"0"}
+              render={({field}) => {
+                return (
+                  <Form.Select id={"form"+field.name} {...field}>
+                    <option selected hidden disabled>Select...</option>
+                    <option value="0">No</option>
+                    <option value="1">Yes</option>
+                  </Form.Select>
+                )
+              }}
+            />
+          </Form.Group>
+
           <Button id={"saveRuleBtn"} type="button" variant="primary" onClick={() => onSubmit()}>
             Save Changes
+          </Button>
+          <Button id={"applyRuleBtn"} type="button" variant="secondary" onClick={() => onApply(ruleId)}>
+            Apply Rule
           </Button>
 
         </Form>

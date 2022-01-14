@@ -21,7 +21,7 @@ export default function SimpleFormModal(props : Props) {
 
 	return (
 		<>
-            <Modal size="xl" style={{maxWidth: "80% !important"}} show={show} backdrop="static" onHide={onCancel} centered id={htmlId}>
+            <Modal size="xl" show={show} backdrop="static" onHide={onCancel} centered id={htmlId}>
                 <Modal.Header closeButton>
                     <Modal.Title>{label}</Modal.Title>
                 </Modal.Header>

@@ -110,7 +110,7 @@ export default function TimetablesPage() {
 		<>
 			<Card.Header id="pageTitle">
 				<h3>
-					Used folders
+					Used timetables
 				</h3>
 			</Card.Header>
 			<Card.Body>
