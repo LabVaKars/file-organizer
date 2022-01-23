@@ -7,7 +7,17 @@ export function useFileDialog(){
     return window.electron.ipcRenderer.fileDialog
 }
 
+export function useRuleApply(){
+    return window.electron.ipcRenderer.ruleApply
+}
 
+export function useSetSchedule(){
+    return window.electron.ipcRenderer.setSchedule
+}
+
+export function useRemoveSchedule(){
+    return window.electron.ipcRenderer.removeSchedule
+}
 
 export function filterValueToJson(data: any){
     let jsonValue:any = {}

@@ -20,7 +20,8 @@ import { processSql } from './models';
 import { dropDB, setupDB } from './db/dbSetup';
 import { getFolderPath } from './fsUtils';
 import knex from 'knex'
-import { applyRule } from './fsApply';
+import { applyFormedRule } from './fsApply';
+import { initSchedules, removeSchedule, scheduleRule } from './fsSchedule';
 
 export let dbPath = './devsqlite.db'
 
@@ -33,6 +34,8 @@ if (isDevelopment) {
 } else {
   dbPath = './prodsqlite.db'
 }
+
+
 
 export let knSqlite = knex({
   client: 'sqlite3',
@@ -50,6 +53,10 @@ let resetDB = false;
   await setupDB(dbPath)
 })()
 
+// initializing defined schedules
+console.log("Applying Schedules")
+initSchedules()
+
 export default class AppUpdater {
   constructor() {
     log.transports.file.level = 'info';
@@ -59,7 +66,6 @@ export default class AppUpdater {
 }
 
 let mainWindow: BrowserWindow | null = null;
-
 
 ipcMain.handle('run-sql', async (event, arg) => {
   console.log("got signal from renderer: run-sql")
@@ -81,9 +87,26 @@ ipcMain.handle('file-dialog', async (event, arg) => {
 })
 
 ipcMain.handle('rule-apply', async (event, arg) => {
-  console.log(arg)
   console.log("got signal from renderer: rule-apply")
-  applyRule(arg)
+  console.log(arg)
+  await applyFormedRule(arg)
+  return ;
+})
+
+ipcMain.handle('set-schedule', async (event, arg) => {
+  console.log("got signal from renderer: set-schedule")
+  console.log(arg)
+  let timetableId = arg[0]
+  let ruleId = arg[1]
+  scheduleRule(timetableId, ruleId)
+  return ;
+})
+
+ipcMain.handle('remove-schedule', async (event, arg) => {
+  console.log("got signal from renderer: remove-schedule")
+  console.log(arg)
+  let ruleId = arg
+  removeSchedule(ruleId)
   return ;
 })
 

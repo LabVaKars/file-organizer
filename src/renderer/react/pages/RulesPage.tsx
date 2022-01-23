@@ -12,7 +12,7 @@ import UsedRulesTable from 'tg_components/tables/UsedRulesTable'
 import { closeModal } from 'tg_reducers/OpenedModalReducer'
 import { changeForm, clearForm, saveAction, saveCondition, saveTimetable } from 'tg_reducers/UsedRulesPageReducer'
 import { initTable } from 'tg_reducers/UsedRulesTableReducer'
-import { useSql } from '../hooks/utilHooks'
+import { useRemoveSchedule, useRuleApply, useSetSchedule, useSql } from '../hooks/utilHooks'
 
 export default function RulesPage() {
 
@@ -46,6 +46,9 @@ export default function RulesPage() {
 
 	let dispatch = useDispatch()
 	let runSql = useSql()
+	let ruleApply = useRuleApply()
+	let setSchedule = useSetSchedule()
+	let removeSchedule = useRemoveSchedule()
 
 	let formName="editRuleForm"
 	let formLabel="Rule Form"
@@ -60,9 +63,11 @@ export default function RulesPage() {
 						actionId: data.actionId,
 						conditionId: data.conditionId,
 						timetableId: data.timetableId,
+						active: data.scheduleActive,
 					})
 					getRules()
 					closeForm()
+					handleSchedules(data.scheduleActive == 1, editId, data.timetableId)
 				}
 				handleSubmit(onSubmit)()
 			}
@@ -76,9 +81,11 @@ export default function RulesPage() {
 						actionId: data.actionId,
 						conditionId: data.conditionId,
 						timetableId: data.timetableId,
+						active: data.scheduleActive,
 					})
 					getRules()
 					closeForm()
+					handleSchedules(data.scheduleActive == 1, editId, data.timetableId)
 				}
 				handleSubmit(onSubmit)()
 			}
@@ -91,15 +98,30 @@ export default function RulesPage() {
 						actionId: data.actionId,
 						conditionId: data.conditionId,
 						timetableId: data.timetableId,
+						active: data.scheduleActive,
 					})
 					getRules()
 					closeForm()
+					handleSchedules(data.scheduleActive == 1, editId, data.timetableId)
 				}
 				handleSubmit(onSubmit)()
 			}
 		}
 		return
-	  }
+	}
+
+	function handleSchedules(isActive: boolean, ruleId:number, timetableId:number){
+		if(timetableId && ruleId){
+			if(isActive){
+				removeSchedule(ruleId)
+				setSchedule(timetableId, ruleId)
+			} else {
+				removeSchedule(ruleId)
+			}
+		} else {
+			console.log("Missing Ids")
+		}
+	}
 
 	const getRules = async () => {
 		console.log("Getting rules from")
@@ -133,8 +155,8 @@ export default function RulesPage() {
 	}
 
 	let onApply = async (ruleId:any) => {
-		let ruleFormat = await runSql(Rule.formRule,ruleId)
-		console.log(ruleFormat)
+		await ruleApply(ruleId)
+		console.log("Rule applied")
 	}
 
 	const FormSwitch = ({id, type}:any) => {

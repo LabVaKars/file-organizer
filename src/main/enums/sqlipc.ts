@@ -36,6 +36,7 @@ export enum Timetable {
 }
 
 export enum Rule {
+    getRulesForSchedule = "rule:getRulesForSchedule",
     getRules = "rule:getRules",
     getRuleById = "rule:getRuleById",
     insertRule = "rule:insertRule",

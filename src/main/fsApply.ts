@@ -1,3 +1,7 @@
+import { Rule } from "./enums/sqlipc"
+import { getSizeMultiplier, getTimeMultiplier } from "./fsUtils"
+import { processSql } from "./models"
+
 const fs = require('fs')
 const path = require('path')
 
@@ -52,39 +56,6 @@ const path = require('path')
 // console.log(JSON.stringify(obj))
 
 
-function getTimeMultiplier(field:any){
-    let timeMultiplier = 1000
-    if(field == "second") {
-        timeMultiplier = 1000
-    } else
-    if(field == "minute") {
-        timeMultiplier = 60000
-    } else
-    if(field == "hour") {
-        timeMultiplier = 3600000
-    } else
-    if(field == "day") {
-        timeMultiplier = 86400000
-    }
-    return timeMultiplier
-}
-
-function getSizeMultiplier(field:any){
-    let sizeMultiplier = 1
-    if(field == "B") {
-        sizeMultiplier = 1
-    } else
-    if(field == "KB") {
-        sizeMultiplier = 1024
-    } else
-    if(field == "MB") {
-        sizeMultiplier = 1048576
-    } else
-    if(field == "GB") {
-        sizeMultiplier = 1073741824
-    }
-    return sizeMultiplier
-}
 
 
 function getField(filePath:any, {field}:any){
@@ -197,7 +168,7 @@ function getComparator(filePath:any, {field,comparator}:any){
                 }
             }
         }
-        if(fld == "contain"){
+        if(fld == "contains"){
             if(neg == "do"){
                 compareFn = (fieldValue:any, value:any) => {
                     return (new RegExp(value)).test(fieldValue)
@@ -261,19 +232,20 @@ function getFileSize(filePath:any){
 }
 
 function applyFilter(filePath:any, filter:any){
+    console.log("filter",filter)
     let field = getField(filePath, filter)
-    console.log(field)
+    console.log("field",field)
     let compareFn = getComparator(filePath, filter)
-    console.log(compareFn)
+    console.log("compareFn",compareFn)
     let value = getValue(filePath, filter)
-    console.log(value)
+    console.log("value",value)
     return compareFn(field, value)
 }
 
 export function applyCondition(filePath:any, condition:any){
     let boolExprTree = {}
     toExpressionJson(condition, boolExprTree, filePath)
-    console.log(JSON.stringify(boolExprTree))
+    console.log("condition",JSON.stringify(boolExprTree))
     return evaluate(boolExprTree)
 }
 
@@ -300,16 +272,6 @@ function evaluate({ OR, AND }:any) {
         return AND.every((c:any) => typeof c === 'object' ? evaluate(c) : c)
 }
 
-
-
-// console.log(getBirthTime(normalFile))
-// console.log(getAccessedTime(normalFile))
-// console.log(getAccessedTime(normalFile).getTime())
-
-// console.log(fs.statSync(normalFile))
-
-// console.log(getFileName(normalFile))
-// console.log(getFileExt(normalFile))
 
 
 const getDirFiles = function(dirPath:any) {
@@ -343,6 +305,7 @@ const getAllFiles = function(dirPath:any, arrayOfFiles:any) {
 }
 
 export function applyRule(rule:any){
+    console.log(rule)
     let folderPath = rule["source"]
     let includeSubfolders = rule["includeSubfolders"]
     let files = includeSubfolders
@@ -356,13 +319,20 @@ export function applyRule(rule:any){
     })
     console.log("acceptedFiles", acceptedFiles)
     acceptedFiles.forEach((file:any) => {
-        if(rule["type"] == "copy"){
-            fs.copyFileSync(file, rule["destination"])
-        } else if(rule["type"] == "move") {
+        if(rule["action"] == "copy"){
+            console.log("Copying file")
+            fs.copyFileSync(file, path.join(rule["destination"], getFullFileName(file)))
+        } else if(rule["action"] == "move") {
+            console.log("Moving file")
             fs.renameSync(file, path.join(rule["destination"], getFullFileName(file)))
         }
     })
     return true
+}
+
+export async function applyFormedRule(ruleId:number) {
+  let ruleForm = await processSql(Rule.formRule, [ruleId])
+  applyRule(ruleForm)
 }
 
 // let normalFile = path.resolve("./test/nested.txt")

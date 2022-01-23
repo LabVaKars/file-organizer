@@ -62,6 +62,19 @@ export default function UsedRulesTable(props: Props) {
           filter: 'contain'
         },
         {
+          Header: 'Active',
+          accessor: 'active',
+          id: 'active',
+          Filter: DefaultColumnFilter,
+          filter: 'contain',
+          Cell: ({value}:any) => {
+            console.log(value)
+            return (<>
+              {value == 1 ? "Yes" : "No"}
+            </>)
+          }
+        },
+        {
           Header: 'Actions',
           accessor: 'id',
           id: 'table_action',

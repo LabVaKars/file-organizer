@@ -106,6 +106,7 @@ export async function setupDB(dbPath:string) {
                 t.integer('actionId');
                 t.integer('conditionId');
                 t.integer('timetableId');
+                t.integer('active');
                 t.foreign('actionId').references('actions.id').withKeyName('fk_rules_actionId_actions_id');
                 t.foreign('conditionId').references('conditions.id').withKeyName('fk_rules_conditionId_conditions_id');
                 t.foreign('timetableId').references('timetables.id').withKeyName('fk_rules_timetableId_timetables_id');

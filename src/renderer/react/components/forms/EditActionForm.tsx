@@ -157,7 +157,6 @@ export default function EditActionForm(props: Props) {
                     <option selected hidden disabled>Select...</option>
                     <option value="move">Move</option>
                     <option value="copy">Copy</option>
-                    <option value="rename">Rename</option>
                   </Form.Select>
                 )
               }}

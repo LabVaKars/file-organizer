@@ -4,6 +4,21 @@ import { Rule } from "../enums/sqlipc";
 import { knSqlite } from "../main";
 
 let ruleSql = new Map()
+
+ruleSql.set(Rule.getRulesForSchedule, () => {
+    let statement = knSqlite.select(
+        "r.id",
+        "t.id as timetableId",
+        "r.active",
+    ).from("rules as r")
+    .innerJoin("timetables as t","r.timetableId","=","t.id")
+    console.log(Rule.getRules, statement.toSQL())
+    let result = statement.then((rows: any) => {
+        return rows
+    })
+    return result
+})
+
 ruleSql.set(Rule.getRules, () => {
     let statement = knSqlite.select(
         "r.id",
@@ -12,6 +27,7 @@ ruleSql.set(Rule.getRules, () => {
         "a.name as action",
         "c.name as condition",
         "t.name as timetable",
+        "r.active",
     ).from("rules as r")
     .innerJoin("actions as a","r.actionId","=","a.id")
     .innerJoin("conditions as c","r.conditionId","=","c.id")
@@ -31,6 +47,7 @@ ruleSql.set(Rule.getRuleById, ([id]:any) => {
         "a.id as actionId",
         "t.id as timetableId",
         "c.id as conditionId",
+        "r.active",
         "a.name as action",
         "t.name as timetable",
         "c.name as condition",
@@ -94,22 +111,30 @@ ruleSql.set(Rule.deleteRule, ([ruleId]: any) => {
 })
 
 ruleSql.set(Rule.formRule, async ([ruleId]: any) => {
+    console.log("Start forming rule")
     let ruleFormat:any = {}
     // selecting action
-    let selectedRule : any = await knSqlite.select(
+
+    let selectedRule : any = null
+    selectedRule = (await knSqlite.select(
         "r.conditionId as conditionId",
         "a.type as type",
         "a.includeSubfolders as includeSubfolders",
         "sf.path as source",
         "df.path as destination",
-    ).from("rules as r").where("r.id", ruleId)
+    ).from("rules as r")
     .innerJoin("actions as a","r.actionId","=","a.id")
     .innerJoin("folders as sf","a.sourceId","=","sf.id")
     .innerJoin("folders as df","a.destinationId","=","df.id")
+    .where("r.id", ruleId))[0]
+
+    console.log("selectedRule", selectedRule)
+
     ruleFormat["source"] = selectedRule.source;
     ruleFormat["destination"] = selectedRule.destination;
     ruleFormat["action"] = selectedRule.type;
     ruleFormat["includeSubfolders"] = selectedRule.includeSubfolders;
+
 
     let conditionId = selectedRule.conditionId
 
@@ -132,9 +157,10 @@ ruleSql.set(Rule.formRule, async ([ruleId]: any) => {
         INNER JOIN conditions par ON par.id = cp.conditionId
         INNER JOIN conditions ch ON ch.id = cp.subConditionId
     `)
-    // console.log(conditions)
+    console.log("conditions1",conditions)
     conditions.forEach((condition:any) => {
         if (condition.parent == null) delete condition.parent
+        condition.conditions = condition.conditions || []
     })
 
     for(let j = 0; j<conditions.length; j++){
@@ -147,11 +173,15 @@ ruleSql.set(Rule.formRule, async ([ruleId]: any) => {
         .from("filters as f")
         .innerJoin("conditionParts as cp","cp.filterId","=","f.id")
         .where("cp.conditionId",condition.id)
+
+        filters.forEach((filter:any) => {
+            filter.value = JSON.parse(filter.value)
+        })
         // console.log(filters)
         condition["filters"] = filters
     }
 
-    console.log("conditions", conditions)
+    console.log("conditions2", conditions)
 
     let rootCondition = tree(conditions, undefined)
     console.log("rootCondition", rootCondition)

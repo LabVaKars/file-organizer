@@ -73,6 +73,7 @@ export default function EditRuleForm(props: Props) {
     form.setValue("condition", result.condition)
     form.setValue("timetableId", result.timetableId)
     form.setValue("timetable", result.timetable)
+    form.setValue("scheduleActive", result.active)
     console.log('In React Renderer', result)
   }
 
@@ -238,7 +239,7 @@ export default function EditRuleForm(props: Props) {
           <Form.Group className="mb-3" controlId="formName">
             <Form.Label>Active</Form.Label>
             <Controller
-              name="active"
+              name="scheduleActive"
               control={form.control}
               rules={{required: true}}
               defaultValue={"0"}
